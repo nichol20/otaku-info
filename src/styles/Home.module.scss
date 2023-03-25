@@ -1,0 +1,21 @@
+@use './' as *;
+
+.app {
+  min-height: 100vh;
+  width: 100%;
+  background-color: $colors-primary-bg;
+  color: $colors-primary-txt;
+  overflow-y: hidden;
+}
+
+.animes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  padding: 25px;
+  width: 100%;
+
+  @include medias-media('tablet') {
+    padding: 0;
+    grid-template-columns: 1fr;
+  }
+}
