@@ -1,0 +1,46 @@
+@use '../../styles/' as *;
+
+.animeCard {
+  width: 100%;
+  border-radius: 8px;
+  scale: .95;
+  transition: scale 300ms ease-in-out;
+  cursor: pointer;
+  overflow: hidden;
+
+  &:hover {
+    scale: 1;
+  }
+}
+
+.content {
+  position: relative;
+  background-color: #ccc;
+}
+
+.details {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  max-height: 0;
+  background-color: #000;
+  color: #fff;
+  overflow: hidden;
+  text-align: center;
+  transition: max-height 600ms ease-out;
+  z-index: 2;
+}
+
+.content:hover .details {
+  max-height: 100%;
+}
+
+.posterImageBox {
+  max-width: 100%;
+  height: auto;
+
+  .posterImage {
+    display: block;
+    width: 100%;
+  }
+}

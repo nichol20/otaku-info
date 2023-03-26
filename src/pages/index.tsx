@@ -1,12 +1,56 @@
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.scss'
+import axios from 'axios'
+import { GetServerSideProps } from 'next'
+import { useEffect, useState } from 'react'
+
+import { Anime } from '@/types/animes'
+import { animesUrl } from '@/utils/api'
 import { AnimeCard } from '@/components'
 
-const inter = Inter({ subsets: ['latin'] })
+import styles from '@/styles/Home.module.scss'
 
-const animes = [ {title: 'Animes'}]
+interface HomeProps {
+  initialAnimes: Anime[]
+}
 
-export default function Home() {
+const pageLimit = 12 
+
+export default function Home({ initialAnimes }: HomeProps) {
+  const [ page, setPage ] = useState(1)
+  const [ animes, setAnimes ] = useState<Anime[]>(initialAnimes)
+
+  const handleScroll = () => {
+    // The scrollTop property sets or returns the number of pixels an element's content is scrolled vertically
+    const scrollTop = document.documentElement.scrollTop 
+    // interior height of the window in pixels
+    const windowHeight = window.innerHeight
+    // The scrollHeight returns the height of an element
+    const scrollHeight = document.documentElement.scrollHeight
+  
+    if (scrollTop + windowHeight >= scrollHeight) {
+      // fetch animes
+      fetchAnimes()
+    }
+  }
+
+  const fetchAnimes = async () => {
+    try {
+      const { data } = await axios.get(animesUrl(pageLimit, page * pageLimit))
+      setAnimes(prev => [...prev, ...data.data])
+      setPage(prev => prev + 1)
+    } catch (error) {
+      console.error('Fail to fetch new animes')
+      return
+    }
+  }
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [ page ])
+
   return (
     <div className={styles.app}>
       <div className={styles.animes}>
@@ -16,4 +60,14 @@ export default function Home() {
       </div>
     </div>
   )
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  const { data } = await axios.get(animesUrl(pageLimit, 0))
+
+  return {
+    props: {
+      initialAnimes: data.data
+    }
+  }
 }
