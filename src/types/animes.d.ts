@@ -1,43 +1,43 @@
 export interface Anime {
-  id:            string;
-  type:          TypeEnum;
-  links:         AnimeLinks;
-  attributes:    Attributes;
-  relationships: { [key: string]: Relationship };
+  id:            string
+  type:          TypeEnum
+  links:         AnimeLinks
+  attributes:    Attributes
+  relationships: RelationShips
 }
 
 export interface Attributes {
-  createdAt:           Date;
-  updatedAt:           Date;
-  slug:                string;
-  synopsis:            string;
-  description:         string;
-  coverImageTopOffset: number;
-  titles:              Titles;
-  canonicalTitle:      string;
-  abbreviatedTitles:   string[];
-  averageRating:       string;
-  ratingFrequencies:   { [key: string]: string };
-  userCount:           number;
-  favoritesCount:      number;
-  startDate:           Date;
-  endDate:             Date;
-  nextRelease:         null;
-  popularityRank:      number;
-  ratingRank:          number;
-  ageRating:           AgeRating;
-  ageRatingGuide:      string;
-  subtype:             ShowTypeEnum;
-  status:              Status;
-  tba:                 null | string;
-  posterImage:         PosterImage;
-  coverImage:          CoverImage | null;
-  episodeCount:        number;
-  episodeLength:       number | null;
-  totalLength:         number;
-  youtubeVideoId:      null | string;
-  showType:            ShowTypeEnum;
-  nsfw:                boolean;
+  createdAt:           string
+  updatedAt:           string
+  slug:                string
+  synopsis:            string
+  description:         string
+  coverImageTopOffset: number
+  titles:              Titles
+  canonicalTitle:      string
+  abbreviatedTitles:   string[]
+  averageRating:       string
+  ratingFrequencies:   { [key: string]: string }
+  userCount:           number
+  favoritesCount:      number
+  startDate:           string
+  endDate:             string
+  nextRelease:         null
+  popularityRank:      number
+  ratingRank:          number
+  ageRating:           AgeRating
+  ageRatingGuide:      string
+  subtype:             ShowTypeEnum
+  status:              Status
+  tba:                 null | string
+  posterImage:         PosterImage
+  coverImage:          CoverImage | null
+  episodeCount:        number
+  episodeLength:       number | null
+  totalLength:         number
+  youtubeVideoId:      null | string
+  showType:            ShowTypeEnum
+  nsfw:                boolean
 }
 
 export enum AgeRating {
@@ -48,36 +48,36 @@ export enum AgeRating {
 }
 
 export interface CoverImage {
-  tiny:     string;
-  large:    string;
-  small:    string;
-  original: string;
-  meta:     Meta;
+  tiny:     string
+  large:    string
+  small:    string
+  original: string
+  meta:     Meta
 }
 
 export interface Meta {
-  dimensions: Dimensions;
+  dimensions: Dimensions
 }
 
 export interface Dimensions {
-  tiny:    Large;
-  large:   Large;
-  small:   Large;
-  medium?: Large;
+  tiny:    Large
+  large:   Large
+  small:   Large
+  medium?: Large
 }
 
 export interface Large {
-  width:  number;
-  height: number;
+  width:  number
+  height: number
 }
 
 export interface PosterImage {
-  tiny:     string;
-  large:    string;
-  small:    string;
-  medium:   string;
-  original: string;
-  meta:     Meta;
+  tiny:     string
+  large:    string
+  small:    string
+  medium:   string
+  original: string
+  meta:     Meta
 }
 
 export enum ShowTypeEnum {
@@ -94,23 +94,42 @@ export enum Status {
 }
 
 export interface Titles {
-  en?:    string;
-  en_jp:  string;
-  ja_jp:  string;
-  en_us?: string;
+  en?:    string
+  en_jp:  string
+  ja_jp:  string
+  en_us?: string
 }
 
 export interface AnimeLinks {
-  self: string;
+  self: string
+}
+
+export interface RelationShips {
+  genres:               Relationship
+  categories:           Relationship
+  castings:             Relationship
+  installments:         Relationship
+  mappings:             Relationship
+  reviews:              Relationship
+  mediaRelationships:   Relationship
+  characters:           Relationship
+  staff:                Relationship
+  productions:          Relationship
+  quotes:               Relationship
+  episodes:             Relationship
+  streamingLinks:       Relationship
+  animeProductions:     Relationship
+  animeCharacters:      Relationship
+  animeStaff:           Relationship
 }
 
 export interface Relationship {
-  links: RelationshipLinks;
+  links: RelationshipLinks
 }
 
 export interface RelationshipLinks {
-  self:    string;
-  related: string;
+  self:    string
+  related: string
 }
 
 export enum TypeEnum {
