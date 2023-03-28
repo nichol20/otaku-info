@@ -5,6 +5,7 @@ import { Anime } from '@/types/animes'
 import styles from './style.module.scss'
 import { Genre } from '@/types/genres'
 import axios from 'axios'
+import Router from 'next/router'
 
 interface AnimeCardProps {
   anime: Anime
@@ -13,9 +14,12 @@ interface AnimeCardProps {
 const maxGenresNum = 3
 
 export const AnimeCard = ({ anime }: AnimeCardProps) => {
-  const createdAt = new Date(anime.attributes.createdAt).getFullYear()
+  const releaseYear = new Date(anime.attributes.createdAt).getFullYear()
   const [ genres, setGenres ] = useState<Genre[]>([])
 
+  const handleAnimeCardClick = () => {
+    Router.push(`/animes/${anime.id}`)
+  }
 
   const fetchGenres = async () => {
     try {
@@ -33,7 +37,7 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
 
 
   return (
-    <div className={styles.animeCard}>
+    <div className={styles.animeCard} onClick={handleAnimeCardClick}>
       <div className={styles.content}>
         <div className={styles.posterImageBox}>
           <img src={anime.attributes.posterImage.medium} alt="poster image" className={styles.posterImage}/>
@@ -42,8 +46,8 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
           <div className={styles.title}>
             {anime.attributes.titles.en_jp}
           </div>
-          <div className={styles.info}>
-            <span className={styles.release}>{createdAt}</span>
+          <div className={styles.meta}>
+            <span className={styles.release}>{releaseYear}</span>
             <span>•</span>
             {genres.slice(0, maxGenresNum).map((genre, index) => (
               <span className={styles.genres} key={index}>

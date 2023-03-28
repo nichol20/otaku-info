@@ -27,7 +27,6 @@ export default function Home({ initialAnimes }: HomeProps) {
     const scrollHeight = document.documentElement.scrollHeight
   
     if (scrollTop + windowHeight >= scrollHeight) {
-      // fetch animes
       fetchAnimes()
     }
   }
@@ -38,7 +37,7 @@ export default function Home({ initialAnimes }: HomeProps) {
       setAnimes(prev => [...prev, ...data.data])
       setPage(prev => prev + 1)
     } catch (error) {
-      console.error('Fail to fetch new animes')
+      console.error('Failed to fetch new animes')
       return
     }
   }

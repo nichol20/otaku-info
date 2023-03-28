@@ -1,0 +1,94 @@
+@use './' as *;
+
+.animePage {
+  background-color: $colors-primary-bg;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.bannerContainer {
+  position: relative;
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+  @include mixins-display-flex();
+}
+
+.bgImgBox {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+  width: 100%;
+  opacity: .8;
+
+  img {
+    width: 100%
+  }
+}
+
+.content {
+  position: relative;
+  z-index: 2;
+  @include mixins-display-flex(center, stretch);
+  gap: 15px;
+  width: 60%;
+}
+
+.posterImgBox {
+  width: 33.33%;
+
+  img {
+    width: 100%;
+    display: block;
+  }
+}
+
+.infoContainer {
+  width: 66.67%;
+  @include mixins-display-flex(space-between, flex-start);
+  flex-direction: column;
+}
+
+.info {
+  
+}
+
+.title {
+  font-size: 2em;
+  color: $colors-primary-txt;
+  margin-bottom: 10px;
+}
+
+.meta {
+  font-size: .875em;
+  padding-left: 5px;
+  margin-bottom: 10px;
+  @include mixins-display-flex(flex-start);
+  gap: 5px;
+  width: 100%;
+  flex-wrap: wrap;
+  color: $colors-primary-txt; 
+}
+
+.trailerBtn {
+  @include mixins-display-flex();
+  border: none;
+  border-radius: 4px;
+  padding: 8px 12px;
+  background-color: $colors-primary-btn-bg;
+  color: $colors-primary-btn-txt;
+  transition: background 300ms ease;
+  cursor: pointer;
+  box-shadow: 5px 5px 10px $colors-medium-shadow;
+
+  &:hover {
+    background-color: $colors-primary-btn-bg-hover;
+  }
+
+  .playIcon {
+    width: 25px;
+    height: 25px;
+  }
+}
