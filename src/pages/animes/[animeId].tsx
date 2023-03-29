@@ -14,7 +14,7 @@ export default function AnimePage() {
   const router = useRouter()
   const [ anime, setAnime ] = useState<Anime>()
   const [ genres, setGenres ] = useState<Genre[]>([])
-  const releaseYear = anime ? new Date(anime.attributes.createdAt).getFullYear() : ''
+  const releaseYear = anime ? new Date(anime.attributes.startDate).getFullYear() : ''
 
   const fetchAnime = async () => {
     try {
@@ -76,11 +76,38 @@ export default function AnimePage() {
                     </span>
                     ))}
                 </div>
+                <div className={styles.otherInfo}>
+                  <div className={styles.item}>
+                    <span className={styles.name}>show type: </span>
+                    <span className={styles.value}>{anime.attributes.showType}</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>subtype: </span>
+                    <span className={styles.value}>{anime.attributes.subtype}</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>status: </span>
+                    <span className={styles.value}>{anime.attributes.status}</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>nsfw: </span>
+                    <span className={styles.value}>{anime.attributes.nsfw ? 'yes' : 'no'}</span>
+                  </div>
+                </div>
               </div>
               <button className={styles.trailerBtn}>
                 Watch trailer
                 <Image src={playIcon} alt="play" className={styles.playIcon} />
               </button>
+          </div>
+        </div>
+      </div>
+
+      <div className={styles.detailsContainer}>
+        <div className={styles.detail}>
+          <h3 className={styles.detailTitle}>Synopsis</h3>
+          <div className={styles.synopsis}>
+            {anime.attributes.synopsis}
           </div>
         </div>
       </div>

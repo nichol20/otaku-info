@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
+import Router from 'next/router'
+import axios from 'axios'
 
 import { Anime } from '@/types/animes'
+import { ApiResponse } from '@/types/api'
+import { Genre } from '@/types/genres'
 
 import styles from './style.module.scss'
-import { Genre } from '@/types/genres'
-import axios from 'axios'
-import Router from 'next/router'
 
 interface AnimeCardProps {
   anime: Anime
@@ -14,7 +15,7 @@ interface AnimeCardProps {
 const maxGenresNum = 3
 
 export const AnimeCard = ({ anime }: AnimeCardProps) => {
-  const releaseYear = new Date(anime.attributes.createdAt).getFullYear()
+  const releaseYear = new Date(anime.attributes.startDate).getFullYear()
   const [ genres, setGenres ] = useState<Genre[]>([])
 
   const handleAnimeCardClick = () => {
@@ -23,8 +24,7 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
 
   const fetchGenres = async () => {
     try {
-      const { data } = await axios.get(anime.relationships.genres.links.related)
-
+      const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related)
       setGenres(data.data)
     } catch (error) {
       return

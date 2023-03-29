@@ -34,6 +34,7 @@
   @include mixins-display-flex(center, stretch);
   gap: 15px;
   width: 60%;
+  max-width: 1000px;
 }
 
 .posterImgBox {
@@ -63,13 +64,27 @@
 
 .meta {
   font-size: .875em;
-  padding-left: 5px;
   margin-bottom: 10px;
   @include mixins-display-flex(flex-start);
   gap: 5px;
   width: 100%;
   flex-wrap: wrap;
   color: $colors-primary-txt; 
+}
+
+.otherInfo {
+
+  .item {
+    font-size: .875em;
+
+    .name {
+      color: $colors-primary-txt;
+    }
+
+    .value {
+      color: $colors-secondary-txt
+    }
+  }
 }
 
 .trailerBtn {
@@ -91,4 +106,24 @@
     width: 25px;
     height: 25px;
   }
+}
+
+.detailsContainer {
+
+}
+
+.detail {
+  padding: 20px;
+
+  .detailTitle {
+    margin-bottom: 15px;
+    font-size: 1.5em;
+    font-weight: 500;
+    color: $colors-primary-txt;
+  }
+}
+
+.synopsis {
+  font-size: 1em;
+  color: $colors-secondary-txt;
 }
