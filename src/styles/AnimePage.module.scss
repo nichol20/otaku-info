@@ -52,10 +52,6 @@
   flex-direction: column;
 }
 
-.info {
-  
-}
-
 .title {
   font-size: 2em;
   color: $colors-primary-txt;
@@ -73,12 +69,18 @@
 }
 
 .otherInfo {
+  background-color: $colors-dark-shadow;
+  padding: 10px;
+  box-shadow: 1px 3px 10px 4px $colors-medium-shadow;
+  margin-bottom: 10px;
 
   .item {
     font-size: .875em;
 
     .name {
+      font-weight: 500;
       color: $colors-primary-txt;
+      margin-right: 3px;
     }
 
     .value {
@@ -106,10 +108,6 @@
     width: 25px;
     height: 25px;
   }
-}
-
-.detailsContainer {
-
 }
 
 .detail {

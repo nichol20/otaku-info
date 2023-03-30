@@ -9,6 +9,7 @@ import styles from '@/styles/AnimePage.module.scss'
 import Image from "next/image"
 import { playIcon } from "@/assets"
 import { Genre } from "@/types/genres"
+import { Episodes } from "@/components"
 
 export default function AnimePage() {
   const router = useRouter()
@@ -82,8 +83,16 @@ export default function AnimePage() {
                     <span className={styles.value}>{anime.attributes.showType}</span>
                   </div>
                   <div className={styles.item}>
-                    <span className={styles.name}>subtype: </span>
-                    <span className={styles.value}>{anime.attributes.subtype}</span>
+                    <span className={styles.name}>episodes: </span>
+                    <span className={styles.value}>{anime.attributes.episodeCount}</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>runtime: </span>
+                    <span className={styles.value}>{anime.attributes.episodeLength}min</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>total runtime: </span>
+                    <span className={styles.value}>{anime.attributes.totalLength}min</span>
                   </div>
                   <div className={styles.item}>
                     <span className={styles.name}>status: </span>
@@ -92,6 +101,10 @@ export default function AnimePage() {
                   <div className={styles.item}>
                     <span className={styles.name}>nsfw: </span>
                     <span className={styles.value}>{anime.attributes.nsfw ? 'yes' : 'no'}</span>
+                  </div>
+                  <div className={styles.item}>
+                    <span className={styles.name}>age guide: </span>
+                    <span className={styles.value}>{anime.attributes.ageRatingGuide}</span>
                   </div>
                 </div>
               </div>
@@ -111,6 +124,8 @@ export default function AnimePage() {
           </div>
         </div>
       </div>
+
+      <Episodes dataUrl={anime.relationships.episodes.links.related} />
     </div>
   )
 }
