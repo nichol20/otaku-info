@@ -1,6 +1,6 @@
 import axios from "axios"
 import { useRouter } from "next/router"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 import { Anime } from "@/types/animes"
 import { singleAnimeUrl } from "@/utils/api"
@@ -9,13 +9,15 @@ import styles from '@/styles/AnimePage.module.scss'
 import Image from "next/image"
 import { playIcon } from "@/assets"
 import { Genre } from "@/types/genres"
-import { Episodes } from "@/components"
+import { Episodes, StreamingReferences, YouTubePlayer } from "@/components"
+import { YouTubePlayerRef } from "@/components/YouTubePlayer"
 
 export default function AnimePage() {
   const router = useRouter()
   const [ anime, setAnime ] = useState<Anime>()
   const [ genres, setGenres ] = useState<Genre[]>([])
   const releaseYear = anime ? new Date(anime.attributes.startDate).getFullYear() : ''
+  const youtubeRef = useRef<YouTubePlayerRef>(null) 
 
   const fetchAnime = async () => {
     try {
@@ -43,6 +45,10 @@ export default function AnimePage() {
   const init = async () => {
     const anime = await fetchAnime()
     fetchGenres(anime)
+  }
+
+  const showTrailer = () => {
+    youtubeRef.current?.show()
   }
 
   useEffect(() => {
@@ -108,7 +114,7 @@ export default function AnimePage() {
                   </div>
                 </div>
               </div>
-              <button className={styles.trailerBtn}>
+              <button className={styles.trailerBtn} onClick={showTrailer}>
                 Watch trailer
                 <Image src={playIcon} alt="play" className={styles.playIcon} />
               </button>
@@ -116,7 +122,13 @@ export default function AnimePage() {
         </div>
       </div>
 
+      <YouTubePlayer videoId={anime.attributes.youtubeVideoId} ref={youtubeRef}/>
+
       <div className={styles.detailsContainer}>
+        <div className={styles.detail}>
+          <h3 className={styles.detailTitle}>Where to watch</h3>
+          <StreamingReferences dataUrl={anime.relationships.streamingLinks.links.related} />
+        </div>
         <div className={styles.detail}>
           <h3 className={styles.detailTitle}>Synopsis</h3>
           <div className={styles.synopsis}>
