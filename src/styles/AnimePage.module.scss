@@ -90,6 +90,21 @@
   }
 }
 
+.ratingBox {
+  @include mixins-display-flex(flex-start, flex-end);
+  margin-top: 5px;
+  color: $colors-primary-txt;
+  gap: 3px;
+  font-size: .875em;
+
+  img {
+    width: 25px;
+    height: 25px;
+  }
+
+
+}
+
 .trailerBtn {
   @include mixins-display-flex();
   border: none;
@@ -103,6 +118,11 @@
 
   &:hover {
     background-color: $colors-primary-btn-bg-hover;
+  }
+
+  &:disabled {
+    background-color: $colors-disabled-btn;
+    cursor: default;
   }
 
   .playIcon {

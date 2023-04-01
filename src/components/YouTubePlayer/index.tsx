@@ -1,6 +1,4 @@
-import { BASE_URL } from '@/data/app'
-import { __ApiPreviewProps } from 'next/dist/server/api-utils'
-import React, { forwardRef, useImperativeHandle, useState } from 'react'
+import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import styles from './style.module.scss'
 
@@ -23,7 +21,11 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef,YouTubePlayerProps>(
   }
 
   const close = () => {
-    setShowPlayer(false)
+    ;(document.querySelector(`.${styles.container}`) as HTMLDivElement).style.opacity = '0'
+
+    setTimeout(() => {
+      setShowPlayer(false)
+    }, 500)
   }
 
   const handleClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -37,6 +39,13 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef,YouTubePlayerProps>(
     close
   }))
 
+  useEffect(() => {
+    if(showPlayer) {
+      const container = document.querySelector(`.${styles.container}`) as HTMLDivElement
+      container.style.opacity = '1'
+    }
+  }, [ showPlayer])
+
   if(!showPlayer || !videoId) return null
 
   return (
@@ -44,7 +53,7 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef,YouTubePlayerProps>(
       <iframe
        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
        allowFullScreen
-       allow="autoplay; encrypted-media"
+       allow="autoplay"
       />
     </div>
   )

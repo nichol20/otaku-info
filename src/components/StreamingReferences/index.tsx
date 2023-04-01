@@ -20,7 +20,6 @@ export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
   const fetchStreamingLinks = async () => {
     try {
       const { data } = await axios.get<ApiResponse<StreamingLinks[]>>(dataUrl)
-      console.log(data.data)
       setStreamingLinks(data.data)
     } catch (error) {
       return
@@ -29,7 +28,6 @@ export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
 
   const getIcon = (link: string) => {
     const icon = streamingLogos.filter(logo => link.includes(logo.streamer))[0]
-    console.log(icon)
     return !!icon ? icon.icon : globeIcon
   }
 

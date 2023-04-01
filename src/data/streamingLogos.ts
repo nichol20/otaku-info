@@ -1,4 +1,4 @@
-import { amazonIcon, crunchyrollIcon, funimationIcon, huluIcon, tubiIcon } from "@/assets"
+import { amazonIcon, crunchyrollIcon, funimationIcon, huluIcon, netflixIcon, tubiIcon } from "@/assets"
 
 interface StreamingLogo {
   icon:     string
@@ -25,5 +25,9 @@ export const streamingLogos: StreamingLogo[] = [
   {
     icon: tubiIcon,
     streamer: 'tubi'
+  },
+  {
+    icon: netflixIcon,
+    streamer: 'netflix'
   }
 ]

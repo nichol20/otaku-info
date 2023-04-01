@@ -7,7 +7,7 @@ import { singleAnimeUrl } from "@/utils/api"
 
 import styles from '@/styles/AnimePage.module.scss'
 import Image from "next/image"
-import { playIcon } from "@/assets"
+import { playIcon, starIcon } from "@/assets"
 import { Genre } from "@/types/genres"
 import { Episodes, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
@@ -62,9 +62,9 @@ export default function AnimePage() {
   return(
     <div className={styles.animePage}>
       <div className={styles.bannerContainer}>
-        <div className={styles.bgImgBox}>
+        {anime?.attributes.coverImage?.original && <div className={styles.bgImgBox}>
           <img src={anime?.attributes.coverImage?.original} alt="background" />
-        </div>
+        </div>}
         <div className={styles.content}>
           <div className={styles.posterImgBox}>
             <img src={anime?.attributes.posterImage.original} alt="" />
@@ -73,17 +73,17 @@ export default function AnimePage() {
           <div className={styles.infoContainer}>
               <div className={styles.info}>
                 <h1 className={styles.title}>{anime?.attributes.titles.en_jp}</h1>
-                <div className={styles.meta}>
-                  <span className={styles.release}>{releaseYear}</span>
-                  <span>•</span>
-                  {genres.map((genre, index) => (
-                    <span className={styles.genres} key={index}>
-                      {genre.attributes.name}
-                      {index !== genres.length - 1 ? ', ' : ''}
-                    </span>
-                    ))}
-                </div>
                 <div className={styles.otherInfo}>
+                  <div className={styles.meta}>
+                    <span className={styles.release}>{releaseYear}</span>
+                    <span>•</span>
+                    {genres.map((genre, index) => (
+                      <span className={styles.genres} key={index}>
+                        {genre.attributes.name}
+                        {index !== genres.length - 1 ? ', ' : ''}
+                      </span>
+                      ))}
+                  </div>
                   <div className={styles.item}>
                     <span className={styles.name}>show type: </span>
                     <span className={styles.value}>{anime.attributes.showType}</span>
@@ -112,9 +112,17 @@ export default function AnimePage() {
                     <span className={styles.name}>age guide: </span>
                     <span className={styles.value}>{anime.attributes.ageRatingGuide}</span>
                   </div>
+                  <div className={styles.ratingBox}>
+                    <Image src={starIcon} alt="star" />
+                    {anime.attributes.averageRating}/100
+                  </div>
                 </div>
               </div>
-              <button className={styles.trailerBtn} onClick={showTrailer}>
+              <button
+               className={styles.trailerBtn} 
+               onClick={showTrailer} 
+               disabled={!anime.attributes.youtubeVideoId}
+              >
                 Watch trailer
                 <Image src={playIcon} alt="play" className={styles.playIcon} />
               </button>

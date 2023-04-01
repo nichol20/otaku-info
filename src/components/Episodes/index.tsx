@@ -13,18 +13,25 @@ interface EpisodesProps {
 export const Episodes = ({ dataUrl }: EpisodesProps) => {
   const [ episodes, setEpisodes ] = useState<Episode[]>([])
 
-  const fetchEpisodes = async () => {
+  const fetchEpisodes = async (url: string, fetchedEpisodes: Episode[]=[]) => {
     try {
-      const { data } = await axios.get<ApiResponse<Episode[]>>(dataUrl)
-
-      setEpisodes(data.data)
+      const response = await axios.get<ApiResponse<Episode[]>>(url)
+  
+      if(response.data.links && "next" in response.data.links) {
+        await fetchEpisodes(
+          `${response.data.links.next!}?page[limit]=20`, 
+          [...fetchedEpisodes, ...response.data.data]
+        )
+        return
+      }
+      setEpisodes([...fetchedEpisodes, ...response.data.data])
     } catch (error) {
       return
     }
   }
 
   useEffect(() => {
-    fetchEpisodes()
+    fetchEpisodes(`${dataUrl}?page[limit]=20`)
   }, [])
 
   return (
