@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react'
 
 import { Anime } from '@/types/animes'
 import { animesUrl } from '@/utils/api'
-import { AnimeCard } from '@/components'
+import { AnimeCard, SearchInput } from '@/components'
 
 import styles from '@/styles/Home.module.scss'
+import { ApiResponse } from '@/types/api'
 
 interface HomeProps {
   initialAnimes: Anime[]
@@ -17,6 +18,7 @@ const pageLimit = 12
 export default function Home({ initialAnimes }: HomeProps) {
   const [ page, setPage ] = useState(1)
   const [ animes, setAnimes ] = useState<Anime[]>(initialAnimes)
+  const [ searchValue, setSearchValue ] = useState('')
 
   const handleScroll = () => {
     // The scrollTop property sets or returns the number of pixels an element's content is scrolled vertically
@@ -27,19 +29,27 @@ export default function Home({ initialAnimes }: HomeProps) {
     const scrollHeight = document.documentElement.scrollHeight
   
     if (scrollTop + windowHeight >= scrollHeight) {
-      fetchAnimes()
+      fetchAnimes(animesUrl(pageLimit, page * pageLimit, searchValue))
     }
   }
 
-  const fetchAnimes = async () => {
+  const fetchAnimes = async (url: string) => {
     try {
-      const { data } = await axios.get(animesUrl(pageLimit, page * pageLimit))
+      const { data } = await axios.get<ApiResponse<Anime[]>>(url)
       setAnimes(prev => [...prev, ...data.data])
       setPage(prev => prev + 1)
     } catch (error) {
       console.error('Failed to fetch new animes')
       return
     }
+  }
+
+  const onSearch = async (value: string) => {
+    setPage(0)
+    setAnimes([])
+    setSearchValue(value)
+    console.log(value)
+    await fetchAnimes(animesUrl(pageLimit, 0, value))
   }
 
   useEffect(() => {
@@ -52,6 +62,7 @@ export default function Home({ initialAnimes }: HomeProps) {
 
   return (
     <div className={styles.app}>
+      <SearchInput onSearch={onSearch} delay={500} />
       <div className={styles.animes}>
         {animes.map((anime, index) => (
           <AnimeCard key={index} anime={anime} />
@@ -62,7 +73,7 @@ export default function Home({ initialAnimes }: HomeProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await axios.get(animesUrl(pageLimit, 0))
+  const { data } = await axios.get<ApiResponse<Anime[]>>(animesUrl(pageLimit, 0))
 
   return {
     props: {

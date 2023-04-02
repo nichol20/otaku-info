@@ -7,3 +7,7 @@
 @mixin white-filter() {
   filter: invert(99%) sepia(67%) saturate(195%) hue-rotate(116deg) brightness(114%) contrast(100%);
 }
+
+@mixin gray-filter() {
+  filter: invert(83%) sepia(6%) saturate(499%) hue-rotate(190deg) brightness(91%) contrast(91%);
+}

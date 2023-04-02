@@ -6,6 +6,9 @@
   background-color: $colors-primary-bg;
   color: $colors-primary-txt;
   overflow-y: hidden;
+  @include mixins-display-flex(flex-start);
+  flex-direction: column;
+  padding-top: 20px;
 }
 
 .animes {
