@@ -3,11 +3,13 @@ import { GetServerSideProps } from 'next'
 import { useEffect, useState } from 'react'
 
 import { Anime } from '@/types/animes'
-import { animesUrl } from '@/utils/api'
+import { animesUrl, trendingAnimeUrl } from '@/utils/api'
 import { AnimeCard, SearchInput } from '@/components'
 
 import styles from '@/styles/Home.module.scss'
 import { ApiResponse } from '@/types/api'
+import { useInfiniteScrolling } from '@/hooks/useIniniteScrolling'
+import { Filters } from '@/components/Filters'
 
 interface HomeProps {
   initialAnimes: Anime[]
@@ -16,22 +18,9 @@ interface HomeProps {
 const pageLimit = 12 
 
 export default function Home({ initialAnimes }: HomeProps) {
-  const [ page, setPage ] = useState(1)
+  const [ page, setPage ] = useState(0)
   const [ animes, setAnimes ] = useState<Anime[]>(initialAnimes)
   const [ searchValue, setSearchValue ] = useState('')
-
-  const handleScroll = () => {
-    // The scrollTop property sets or returns the number of pixels an element's content is scrolled vertically
-    const scrollTop = document.documentElement.scrollTop 
-    // interior height of the window in pixels
-    const windowHeight = window.innerHeight
-    // The scrollHeight returns the height of an element
-    const scrollHeight = document.documentElement.scrollHeight
-  
-    if (scrollTop + windowHeight >= scrollHeight) {
-      fetchAnimes(animesUrl(pageLimit, page * pageLimit, searchValue))
-    }
-  }
 
   const fetchAnimes = async (url: string) => {
     try {
@@ -52,12 +41,8 @@ export default function Home({ initialAnimes }: HomeProps) {
     await fetchAnimes(animesUrl(pageLimit, 0, value))
   }
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll)
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
+  useInfiniteScrolling(() => {
+    fetchAnimes(animesUrl(pageLimit, page * pageLimit, searchValue))
   }, [ page ])
 
   return (
@@ -68,12 +53,13 @@ export default function Home({ initialAnimes }: HomeProps) {
           <AnimeCard key={index} anime={anime} />
         ))}
       </div>
+      <Filters />
     </div>
   )
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  const { data } = await axios.get<ApiResponse<Anime[]>>(animesUrl(pageLimit, 0))
+  const { data } = await axios.get<ApiResponse<Anime[]>>(trendingAnimeUrl())
 
   return {
     props: {

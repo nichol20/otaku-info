@@ -5,34 +5,33 @@ import axios from 'axios'
 import React, { useEffect, useState } from 'react'
 
 import styles from './style.module.scss'
+import { useInfiniteScrolling } from '@/hooks/useIniniteScrolling'
 
 interface EpisodesProps {
   dataUrl: string
 }
 
+const episodeLimit = 20
+
 export const Episodes = ({ dataUrl }: EpisodesProps) => {
   const [ episodes, setEpisodes ] = useState<Episode[]>([])
+  const [ page, setPage ] = useState(0)
 
-  const fetchEpisodes = async (url: string, fetchedEpisodes: Episode[]=[]) => {
+  const fetchEpisodes = async (url: string) => {
     try {
       const response = await axios.get<ApiResponse<Episode[]>>(url)
-  
-      if(response.data.links && "next" in response.data.links) {
-        await fetchEpisodes(
-          `${response.data.links.next!}?page[limit]=20`, 
-          [...fetchedEpisodes, ...response.data.data]
-        )
-        return
-      }
-      setEpisodes([...fetchedEpisodes, ...response.data.data])
+
+      setEpisodes(prev => [...prev, ...response.data.data])
+      setPage(prev => prev + 1)
     } catch (error) {
+      console.error(error)
       return
     }
   }
 
-  useEffect(() => {
-    fetchEpisodes(`${dataUrl}?page[limit]=20`)
-  }, [])
+  useInfiniteScrolling(() => {
+    fetchEpisodes(`${dataUrl}?page[limit]=${episodeLimit}&page[offset]=${episodeLimit * page}`)
+  }, [ page ])
 
   return (
     <div className={styles.container}>
