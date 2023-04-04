@@ -1,15 +1,19 @@
 import axios from 'axios'
+import Image from 'next/image'
 import { GetServerSideProps } from 'next'
-import { useEffect, useState } from 'react'
+import { useRef, useState } from 'react'
 
 import { Anime } from '@/types/animes'
 import { animesUrl, trendingAnimeUrl } from '@/utils/api'
 import { AnimeCard, SearchInput } from '@/components'
-
-import styles from '@/styles/Home.module.scss'
 import { ApiResponse } from '@/types/api'
 import { useInfiniteScrolling } from '@/hooks/useIniniteScrolling'
-import { Filters } from '@/components/Filters'
+import { FiltersCard } from '@/components' 
+import { Filters } from '@/types/filters'
+import { FiltersRef } from '@/components/FiltersCard'
+
+import styles from '@/styles/Home.module.scss'
+import { filterIcon } from '@/assets'
 
 interface HomeProps {
   initialAnimes: Anime[]
@@ -22,6 +26,8 @@ export default function Home({ initialAnimes }: HomeProps) {
   const [ animes, setAnimes ] = useState<Anime[]>(initialAnimes)
   const [ searchValue, setSearchValue ] = useState('')
 
+  const filtersCardRef = useRef<FiltersRef>(null)
+
   const fetchAnimes = async (url: string) => {
     try {
       const { data } = await axios.get<ApiResponse<Anime[]>>(url)
@@ -33,27 +39,44 @@ export default function Home({ initialAnimes }: HomeProps) {
     }
   }
 
-  const onSearch = async (value: string) => {
+  const handleSearch = async (value: string) => {
     setPage(0)
     setAnimes([])
     setSearchValue(value)
-    console.log(value)
-    await fetchAnimes(animesUrl(pageLimit, 0, value))
+    await fetchAnimes(animesUrl(pageLimit, 0, { text: value }))
+  }
+
+  const handleFiltersChange = async (filters: Filters) => {
+    setPage(0)
+    setAnimes([])
+    await fetchAnimes(animesUrl(pageLimit, 0, filters))
+  }
+
+  const handleFiltersBtnClick = () => {
+    filtersCardRef.current?.show()
   }
 
   useInfiniteScrolling(() => {
-    fetchAnimes(animesUrl(pageLimit, page * pageLimit, searchValue))
+    fetchAnimes(animesUrl(pageLimit, page * pageLimit, { text: searchValue }))
   }, [ page ])
 
   return (
     <div className={styles.app}>
-      <SearchInput onSearch={onSearch} delay={500} />
+      <div className={styles.actions}>
+        <div className={styles.spacer}></div>
+        <SearchInput onSearch={handleSearch} delay={500} />
+        <button className={styles.filtersBtn} onClick={handleFiltersBtnClick}>
+          <Image src={filterIcon} alt="filter" />
+          Filters
+        </button>
+      </div>
+
       <div className={styles.animes}>
         {animes.map((anime, index) => (
           <AnimeCard key={index} anime={anime} />
         ))}
       </div>
-      <Filters />
+      <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange}/>
     </div>
   )
 }

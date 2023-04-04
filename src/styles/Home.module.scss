@@ -11,6 +11,35 @@
   padding-top: 20px;
 }
 
+.actions {
+  @include mixins-display-flex(space-between);
+  width: 100%;
+  padding: 0px 30px;
+}
+
+.filtersBtn {
+  @include mixins-display-flex();
+  gap: 5px;
+  font-size: .875em;
+  font-weight: 500;
+  color: $colors-primary-txt;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px 12px;
+  border-radius: 4px;
+
+  &:hover {
+    background-color: $colors-light-shadow;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+    @include mixins-gray-filter();
+  }
+}
+
 .animes {
   display: grid;
   grid-template-columns: repeat(4, 1fr);

@@ -1,6 +1,7 @@
 export { default as playIcon } from './images/play.svg'
 export { default as starIcon } from './images/star.png'
 export { default as searchIcon } from './images/search.svg'
+export { default as filterIcon } from './images/filter.svg'
 
 // streaming logos
 export { default as amazonIcon } from './images/streamingLogos/amazon.svg'

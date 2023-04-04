@@ -1,11 +1,11 @@
 export interface ApiResponse<T> {
   data: T
+  meta?: ApiResponseMeta
   links?: ApiResponseLinks
-  meta?: Meta
   [key: string]: any
 }
 
-interface Meta {
+interface ApiResponseMeta {
   count: number
 }
 
