@@ -14,6 +14,7 @@ import { FiltersRef } from '@/components/FiltersCard'
 
 import styles from '@/styles/Home.module.scss'
 import { filterIcon } from '@/assets'
+import { debounce } from '@/utils/debounce'
 
 interface HomeProps {
   initialAnimes: Anime[]
@@ -46,11 +47,11 @@ export default function Home({ initialAnimes }: HomeProps) {
     await fetchAnimes(animesUrl(pageLimit, 0, { text: value }))
   }
 
-  const handleFiltersChange = async (filters: Filters) => {
+  const handleFiltersChange = debounce(async (filters: Filters) => {
     setPage(0)
     setAnimes([])
     await fetchAnimes(animesUrl(pageLimit, 0, filters))
-  }
+  }, 1000)
 
   const handleFiltersBtnClick = () => {
     filtersCardRef.current?.show()

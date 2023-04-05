@@ -5,6 +5,9 @@ import { availableGenres } from '@/data/availableGenres'
 import { debounce } from '@/utils/debounce'
 
 import styles from './style.module.scss'
+import { Filters } from '@/types/filters'
+import { seasons } from '@/data/seasons'
+import { ArrayElementType } from '@/types/array'
 
 interface FiltersProps {
   onChange: (filter: Filters) => void
@@ -15,23 +18,31 @@ export interface FiltersRef {
   close: () => void
 }
 
-interface Filters {
+interface FiltersCardFilters {
   genres: string[]
+  season: NonNullable<Filters['season']>
 }
 
 export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
   ({ onChange }, ref) => {
   const [ showFilters, setShowFilters ] = useState(true)
-  const [ filters, setFilters ] = useState<Filters>({ genres: [] })
+  const [ filters, setFilters ] = useState<FiltersCardFilters>({ genres: [], season: ''})
 
-  const handleClick = (category: keyof Filters, value: string) => {
+  const handleClick = <K extends keyof FiltersCardFilters>(
+    category: K, 
+    value: string
+  ) => {
     setFilters(prev => {
       const newState = {...prev}
 
-      if(!newState[category].includes(value)) {
-        newState[category] = [...newState[category], value] 
+      if(Array.isArray(newState[category])) {
+        if(!newState[category].includes(value)) {
+          (newState[category] as string[]) = [...(newState[category] as string[]), value] 
+        } else {
+          (newState[category] as string[]) = (newState[category] as string[]).filter(v => v !== value)
+        }
       } else {
-        newState[category] = newState[category].filter(v => v !== value)
+        (newState[category] as string) = value 
       }
 
       onChange(newState)
@@ -45,7 +56,7 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
     }
   }
 
-  const getClass = (category: keyof Filters, value: string): string => {
+  const getClass = (category: keyof FiltersCardFilters, value: string): string => {
     if(filters[category].includes(value)) return styles.selected
     else return ''
   }
@@ -59,8 +70,8 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
   }
 
   const cleanFilters = () => {
-    setFilters({ genres: [] })
-    onChange({ genres: [] })
+    setFilters({ genres: [], season: '' })
+    onChange({ genres: [], season: '' })
   }
 
   useImperativeHandle(ref, () => ({
@@ -82,6 +93,19 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
                key={index}
                onClick={() => handleClick('genres', genre.name)}
               >{genre.name}</div>
+            ))}
+          </div>
+        </div>
+        <div className={styles.category}>
+          <span className={styles.title}>Season</span>
+          <div className={styles.values}>
+            {seasons.map((season, index) => (
+              <div
+               className={`${styles.value} ${getClass('season', season)}`} 
+               key={index}
+               onClick={() => handleClick('season', season)}
+              >{season
+              }</div>
             ))}
           </div>
         </div>

@@ -12,6 +12,8 @@ const getFilterString = (filters: Filters | undefined) => {
     })
   }
 
+  if(filters?.season && filters.season.length > 0) filterStr += `&filter[season]=${filters.season}`
+
   return filterStr
 }
 

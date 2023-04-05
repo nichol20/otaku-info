@@ -40,7 +40,8 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
     <div className={styles.animeCard} onClick={handleAnimeCardClick}>
       <div className={styles.content}>
         <div className={styles.posterImageBox}>
-          <img src={anime.attributes.posterImage.medium} alt="poster image" className={styles.posterImage}/>
+          {anime.attributes.posterImage?.medium &&
+            <img src={anime.attributes.posterImage.medium} alt="poster image" className={styles.posterImage}/>}
         </div>
         <div className={styles.details}>
           <div className={styles.title}>
