@@ -41,16 +41,18 @@ export default function Home({ initialAnimes }: HomeProps) {
   }
 
   const handleSearch = async (value: string) => {
+    const selectedFilters = filtersCardRef.current?.getSelectedFilters()
     setPage(0)
     setAnimes([])
     setSearchValue(value)
-    await fetchAnimes(animesUrl(pageLimit, 0, { text: value }))
+    console.log({ ...selectedFilters, text: value })
+    await fetchAnimes(animesUrl(pageLimit, 0, { ...selectedFilters, text: value }))
   }
 
   const handleFiltersChange = debounce(async (filters: Filters) => {
     setPage(0)
     setAnimes([])
-    await fetchAnimes(animesUrl(pageLimit, 0, filters))
+    await fetchAnimes(animesUrl(pageLimit, 0, { ...filters, text: searchValue }))
   }, 1000)
 
   const handleFiltersBtnClick = () => {

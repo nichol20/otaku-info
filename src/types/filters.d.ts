@@ -3,6 +3,7 @@ export interface Filters {
   text?:     string
   season?:   Season | ""
   streamers?: Streamer[]
+  ageRating?: AgeRating | ""
 }
 
 export type Season = 'winter' | 'spring' | 'summer' | 'fall'

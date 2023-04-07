@@ -7,6 +7,7 @@ import { ApiResponse } from '@/types/api'
 import { Genre } from '@/types/genres'
 
 import styles from './style.module.scss'
+import { API_BASE_URL } from '@/data/api'
 
 interface AnimeCardProps {
   anime: Anime
@@ -24,9 +25,12 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
 
   const fetchGenres = async () => {
     try {
-      const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related)
+      const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related, {
+        baseURL: API_BASE_URL
+      })
       setGenres(data.data)
     } catch (error) {
+      console.log(anime)
       return
     }
   }
@@ -49,7 +53,7 @@ export const AnimeCard = ({ anime }: AnimeCardProps) => {
           </div>
           <div className={styles.meta}>
             <span className={styles.release}>{releaseYear}</span>
-            <span>•</span>
+            {genres.length > 0 && <span>•</span>}
             {genres.slice(0, maxGenresNum).map((genre, index) => (
               <span className={styles.genres} key={index}>
                 {genre.attributes.name}

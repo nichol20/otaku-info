@@ -1,12 +1,10 @@
 import React, { forwardRef, useImperativeHandle, useState } from 'react'
 
 import { Card } from '../Card'
-import { availableGenres } from '@/data/availableGenres'
 
 import styles from './style.module.scss'
-import { Filters, Season, Streamer } from '@/types/filters'
-import { seasons } from '@/data/seasons'
-import { streamers } from '@/data/streamers'
+import { AgeRating, Filters, Season, Streamer } from '@/types/filters'
+import { seasons, streamers, genres, ageRatings } from '@/data/filters'
 
 interface FiltersProps {
   onChange: (filter: Filters) => void
@@ -15,24 +13,27 @@ interface FiltersProps {
 export interface FiltersRef {
   show: () => void
   close: () => void
+  getSelectedFilters: () => FiltersCardFilters
 }
 
 interface FiltersCardFilters {
   genres: string[]
   season: Season | ""
   streamers: Streamer[]
+  ageRating: AgeRating | ""
   [key: string]: string | string[]
 }
 
 const INITIAL_FILTERS: FiltersCardFilters = {
   genres: [],
   season: '',
-  streamers: []
+  streamers: [],
+  ageRating: ''
 } 
 
 export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
   ({ onChange }, ref) => {
-  const [ showFilters, setShowFilters ] = useState(true)
+  const [ showFilters, setShowFilters ] = useState(false)
   const [ filters, setFilters ] = useState<FiltersCardFilters>(INITIAL_FILTERS)
 
   const handleClick = (category:  keyof FiltersCardFilters, value: string) => {
@@ -64,8 +65,11 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
   }
 
   const getClass = (category: keyof FiltersCardFilters, value: string): string => {
-    if(filters[category].includes(value)) return styles.selected
-    else return ''
+    if(Array.isArray(filters[category])) {
+      return filters[category].includes(value) ? styles.selected : ''
+    }
+    
+    return filters[category] === value ? styles.selected : ''
   }
 
   const show = () => {
@@ -81,9 +85,14 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
     onChange(INITIAL_FILTERS)
   }
 
+  const getSelectedFilters = () => {
+    return filters
+  }
+
   useImperativeHandle(ref, () => ({
     show,
-    close
+    close,
+    getSelectedFilters
   }))
 
   if(!showFilters) return null
@@ -94,12 +103,12 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
         <div className={styles.category}>
           <span className={styles.title}>Genres</span>
           <div className={styles.values}>
-            {availableGenres.map((genre, index) => (
-              <div
-               className={`${styles.value} ${getClass('genres', genre.name)}`} 
+            {genres.map((genre, index) => (
+              <button
+               className={`${styles.value} ${getClass('genres', genre)}`} 
                key={index}
-               onClick={() => handleClick('genres', genre.name)}
-              >{genre.name}</div>
+               onClick={() => handleClick('genres', genre)}
+              >{genre}</button>
             ))}
           </div>
         </div>
@@ -107,11 +116,11 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
           <span className={styles.title}>Season</span>
           <div className={styles.values}>
             {seasons.map((season, index) => (
-              <div
+              <button
                className={`${styles.value} ${getClass('season', season)}`} 
                key={index}
                onClick={() => handleClick('season', season)}
-              >{season}</div>
+              >{season}</button>
             ))}
           </div>
         </div>
@@ -119,14 +128,28 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
           <span className={styles.title}>Streamer</span>
           <div className={styles.values}>
             {streamers.map((streamer, index) => (
-              <div
+              <button
                className={`${styles.value} ${getClass('streamers', streamer)}`} 
                key={index}
                onClick={() => handleClick('streamers', streamer)}
-              >{streamer}</div>
+              >{streamer}</button>
             ))}
           </div>
         </div>
+        
+        <div className={styles.category}>
+          <span className={styles.title}>Age rating</span>
+          <div className={styles.values}>
+            {ageRatings.map((ageRating, index) => (
+              <button
+               className={`${styles.value} ${getClass('ageRating', ageRating)}`} 
+               key={index}
+               onClick={() => handleClick('ageRating', ageRating)}
+              >{ageRating}</button>
+            ))}
+          </div>
+        </div>
+
       </div>
 
       <div className={styles.actions}>

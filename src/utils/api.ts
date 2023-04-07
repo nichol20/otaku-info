@@ -20,6 +20,8 @@ const getFilterString = (filters: Filters | undefined) => {
     })
   }
 
+  if(filters?.ageRating && filters.ageRating.length > 0) filterStr += `&filter[ageRating]=${filters.ageRating}`
+
   return filterStr
 }
 

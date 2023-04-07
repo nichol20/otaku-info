@@ -37,7 +37,9 @@ export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
 
   return (
     <div className={styles.container}>
-      {streamingLinks.map((streaming, index) => (
+      {streamingLinks.length === 0 
+      ? <span className={styles.noSiteMessage}>No site available...</span>
+      : streamingLinks.map((streaming, index) => (
         <Link
          key={index} 
          href={streaming.attributes.url} 
@@ -47,6 +49,7 @@ export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
           <Image src={getIcon(streaming.attributes.url)} alt="logo"/>
         </Link>
       ))}
+      
     </div>
   )
 }

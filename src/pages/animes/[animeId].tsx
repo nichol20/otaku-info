@@ -1,4 +1,4 @@
-import axios from "axios"
+import axios, { CancelTokenSource } from "axios"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
 
@@ -11,6 +11,7 @@ import { playIcon, starIcon } from "@/assets"
 import { Genre } from "@/types/genres"
 import { Episodes, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
+import { ApiResponse } from "@/types/api"
 
 export default function AnimePage() {
   const router = useRouter()
@@ -19,32 +20,41 @@ export default function AnimePage() {
   const releaseYear = anime ? new Date(anime.attributes.startDate).getFullYear() : ''
   const youtubeRef = useRef<YouTubePlayerRef>(null) 
 
-  const fetchAnime = async () => {
+  const fetchAnime = async (cancelToken: CancelTokenSource) => {
     try {
       const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
-      const { data } = await axios.get(singleAnimeUrl(animeId))
+      const { data } = await axios.get<ApiResponse<Anime>>(singleAnimeUrl(animeId), { 
+        cancelToken: cancelToken.token
+      })
 
       setAnime(data.data)
       return data.data
     } catch (error) {
-      console.error('Failed to fetch the anime')
-      return
+      if(axios.isCancel(error)) {
+        console.log('anime request cancelled!')
+      }
     }
   }
 
-  const fetchGenres = async (anime: Anime) => {
+  const fetchGenres = async (anime: Anime | undefined, cancelToken: CancelTokenSource) => {
     try {
-      const { data } = await axios.get(anime.relationships.genres.links.related)
+      if(!anime) return
 
+      const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related, {
+        cancelToken: cancelToken.token
+      })
+  
       setGenres(data.data)
     } catch (error) {
-      return
+      if(axios.isCancel(error)) {
+        console.log('genres request cancelled!')
+      }
     }
   }
 
-  const init = async () => {
-    const anime = await fetchAnime()
-    fetchGenres(anime)
+  const init = async (animeCancelToken: CancelTokenSource, genreCancelToken: CancelTokenSource) => {
+    const anime = await fetchAnime(animeCancelToken)
+    fetchGenres(anime, genreCancelToken)
   }
 
   const showTrailer = () => {
@@ -52,8 +62,16 @@ export default function AnimePage() {
   }
 
   useEffect(() => {
+    const animeCancelToken = axios.CancelToken.source()
+    const genreCancelToken = axios.CancelToken.source()
+
     if(router.isReady) {
-      init()
+      init(animeCancelToken, genreCancelToken)
+    }
+
+    return () => {
+      animeCancelToken.cancel()
+      genreCancelToken.cancel()
     }
   }, [ router.isReady ])
 
@@ -65,67 +83,66 @@ export default function AnimePage() {
         {anime?.attributes.coverImage?.original && <div className={styles.bgImgBox}>
           <img src={anime?.attributes.coverImage?.original} alt="background" />
         </div>}
-        <div className={styles.content}>
+        <div className={styles.grid}>
+          <h1 className={styles.title}>{anime?.attributes.titles.en_jp}</h1>
           <div className={styles.posterImgBox}>
             <img src={anime?.attributes.posterImage.original} alt="" />
           </div>
       
-          <div className={styles.infoContainer}>
-              <div className={styles.info}>
-                <h1 className={styles.title}>{anime?.attributes.titles.en_jp}</h1>
-                <div className={styles.otherInfo}>
-                  <div className={styles.meta}>
-                    <span className={styles.release}>{releaseYear}</span>
-                    <span>•</span>
-                    {genres.map((genre, index) => (
-                      <span className={styles.genres} key={index}>
-                        {genre.attributes.name}
-                        {index !== genres.length - 1 ? ', ' : ''}
-                      </span>
-                      ))}
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>show type: </span>
-                    <span className={styles.value}>{anime.attributes.showType}</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>episodes: </span>
-                    <span className={styles.value}>{anime.attributes.episodeCount}</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>runtime: </span>
-                    <span className={styles.value}>{anime.attributes.episodeLength}min</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>total runtime: </span>
-                    <span className={styles.value}>{anime.attributes.totalLength}min</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>status: </span>
-                    <span className={styles.value}>{anime.attributes.status}</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>nsfw: </span>
-                    <span className={styles.value}>{anime.attributes.nsfw ? 'yes' : 'no'}</span>
-                  </div>
-                  <div className={styles.item}>
-                    <span className={styles.name}>age guide: </span>
-                    <span className={styles.value}>{anime.attributes.ageRatingGuide}</span>
-                  </div>
-                  <div className={styles.ratingBox}>
-                    <Image src={starIcon} alt="star" />
-                    {anime.attributes.averageRating}/100
-                  </div>
-                </div>
-              </div>
-              <button
-               className={styles.trailerBtn} 
-               onClick={showTrailer} 
-               disabled={!anime.attributes.youtubeVideoId}
-              >
-                Watch trailer
-                <Image src={playIcon} alt="play" className={styles.playIcon} />
-              </button>
+          <div className={styles.info}>
+            <div className={styles.meta}>
+              <span className={styles.release}>{releaseYear}</span>
+              {genres.length > 0 && <span>•</span>}
+              {genres.map((genre, index) => (
+                <span className={styles.genres} key={index}>
+                  {genre.attributes.name}
+                  {index !== genres.length - 1 ? ', ' : ''}
+                </span>
+                ))}
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>show type: </span>
+              <span className={styles.value}>{anime.attributes.showType}</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>episodes: </span>
+              <span className={styles.value}>{anime.attributes.episodeCount}</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>runtime: </span>
+              <span className={styles.value}>{anime.attributes.episodeLength}min</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>total runtime: </span>
+              <span className={styles.value}>{anime.attributes.totalLength}min</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>status: </span>
+              <span className={styles.value}>{anime.attributes.status}</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>nsfw: </span>
+              <span className={styles.value}>{anime.attributes.nsfw ? 'yes' : 'no'}</span>
+            </div>
+            <div className={styles.item}>
+              <span className={styles.name}>age guide: </span>
+              <span className={styles.value}>{anime.attributes.ageRatingGuide}</span>
+            </div>
+            <div className={styles.ratingBox}>
+              <Image src={starIcon} alt="star" />
+              {anime.attributes.averageRating}/100
+            </div>
+          </div>
+
+          <div className={styles.trailerBtnContainer}>
+            <button
+              className={styles.trailerBtn} 
+              onClick={showTrailer} 
+              disabled={!anime.attributes.youtubeVideoId}
+            >
+              Watch trailer
+              <Image src={playIcon} alt="play" className={styles.playIcon} />
+            </button>
           </div>
         </div>
       </div>

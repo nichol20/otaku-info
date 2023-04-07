@@ -37,12 +37,15 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
     <div className={styles.container}>
       {episodes.map((ep, index) => (
         <div className={styles.episode} key={index}>
-            <div className={styles.thumbnailBox}>
-              <img src={ep.attributes.thumbnail?.original} alt="thumbnail" />
+            {ep.attributes.thumbnail?.original && <div className={styles.thumbnailBox}>
+              <img src={ep.attributes.thumbnail.original} alt="thumbnail" />
               {ep.attributes.length && <span className={styles.time}>{ep.attributes.length}min</span>}
-            </div>
+            </div>}
             <div className={styles.info}>
-              <h5 className={styles.title}>Episode {ep.attributes.number} - {ep.attributes.titles.en_jp}</h5>
+              <h5 className={styles.title}>
+                Episode {ep.attributes.number} 
+                {ep.attributes.titles?.en_jp && ` - ${ep.attributes.titles.en_jp}`}
+              </h5>
               <div className={styles.synopsis}>{ep.attributes.synopsis}</div>
             </div>
         </div>
