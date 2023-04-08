@@ -12,6 +12,7 @@ import { Genre } from "@/types/genres"
 import { Episodes, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
 import { ApiResponse } from "@/types/api"
+import { getFromCache, setToCache } from "@/utils/sessionStorage"
 
 export default function AnimePage() {
   const router = useRouter()
@@ -21,14 +22,24 @@ export default function AnimePage() {
   const youtubeRef = useRef<YouTubePlayerRef>(null) 
 
   const fetchAnime = async (cancelToken: CancelTokenSource) => {
+    const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
+    const cacheKey = `anime:${animeId}`
+    const cachedAnime = getFromCache<Anime>(cacheKey)
+
+    if(cachedAnime) {
+      setAnime(cachedAnime)
+      return cachedAnime
+    }
+    
     try {
-      const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
       const { data } = await axios.get<ApiResponse<Anime>>(singleAnimeUrl(animeId), { 
         cancelToken: cancelToken.token
       })
 
       setAnime(data.data)
+      setToCache(cacheKey, data.data)
       return data.data
+      
     } catch (error) {
       if(axios.isCancel(error)) {
         console.log('anime request cancelled!')
@@ -37,13 +48,23 @@ export default function AnimePage() {
   }
 
   const fetchGenres = async (anime: Anime | undefined, cancelToken: CancelTokenSource) => {
-    try {
-      if(!anime) return
+    const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
+    const cacheKey = `anime:${animeId}:genres`
+    const cachedGenres = getFromCache<Genre[]>(cacheKey)
 
+    if(cachedGenres) {
+      setGenres(cachedGenres)
+      return
+    }
+
+    if(!anime) return
+
+    try {
       const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related, {
         cancelToken: cancelToken.token
       })
   
+      setToCache(cacheKey, data.data)
       setGenres(data.data)
     } catch (error) {
       if(axios.isCancel(error)) {
@@ -52,9 +73,9 @@ export default function AnimePage() {
     }
   }
 
-  const init = async (animeCancelToken: CancelTokenSource, genreCancelToken: CancelTokenSource) => {
-    const anime = await fetchAnime(animeCancelToken)
-    fetchGenres(anime, genreCancelToken)
+  const init = async (cancelToken: CancelTokenSource) => {
+    const anime = await fetchAnime(cancelToken)
+    fetchGenres(anime, cancelToken)
   }
 
   const showTrailer = () => {
@@ -62,16 +83,14 @@ export default function AnimePage() {
   }
 
   useEffect(() => {
-    const animeCancelToken = axios.CancelToken.source()
-    const genreCancelToken = axios.CancelToken.source()
+    const cancelToken = axios.CancelToken.source()
 
     if(router.isReady) {
-      init(animeCancelToken, genreCancelToken)
+      init(cancelToken)
     }
 
     return () => {
-      animeCancelToken.cancel()
-      genreCancelToken.cancel()
+      cancelToken.cancel()
     }
   }, [ router.isReady ])
 
