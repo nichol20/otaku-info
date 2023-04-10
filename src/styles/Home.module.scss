@@ -1,0 +1,48 @@
+@use './' as *;
+
+.app {
+  background-color: $colors-primary-bg;
+  width: 100%;
+  min-height: 100vh;
+  @include mixins-display-flex();
+  color: $colors-primary-txt;
+}
+
+.container {
+  width: 100%;
+  @include mixins-display-flex(center, flex-start);
+  flex-direction: column;
+  padding-left: 40px; 
+  gap: 20px;
+}
+
+.logo {
+  color: $colors-primary-txt;
+  font-size: 3em;
+}
+
+.description {
+  color: $colors-secondary-txt;
+  font-size: 1em;
+}
+
+.linkContainer {
+  @include mixins-display-flex();
+  flex-direction: column;
+  gap: 5px;
+}
+
+.mainLink {
+  width: 200px;
+  height: 80px;
+  background-color: $colors-primary-btn-bg;
+  @include mixins-display-flex();
+  text-decoration: none;
+  color: $colors-primary-btn-txt;
+  border-radius: 8px;
+  transition: background 300ms ease-out;
+
+  &:hover {
+    background-color: $colors-primary-btn-bg-hover;
+  }
+}

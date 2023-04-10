@@ -8,6 +8,7 @@ import { Genre } from '@/types/genres'
 
 import styles from './style.module.scss'
 import { API_BASE_URL } from '@/data/api'
+import { Manga } from '@/types/mangas'
 
 interface AnimeCardProps {
   anime: Anime

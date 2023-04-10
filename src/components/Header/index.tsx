@@ -26,7 +26,7 @@ export const Header = () => {
 
   return (
     <div className={`${styles.header} ${visible ? '' : styles.hidden}`}>
-      <h1 className={styles.logo}>Animes and Mangas</h1>
+      <Link href='/' className={styles.logo}>Animes and Mangas</Link>
       <div className={styles.linkList}>
         <Link href="/animes" className={getLinkClass('/animes')}>Animes</Link>
         <Link href="/mangas" className={getLinkClass('/mangas')}>Mangas</Link>
