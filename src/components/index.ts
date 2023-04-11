@@ -1,4 +1,5 @@
-export { AnimeCard } from './AnimeCard'
+export { MediaDisplay } from './MediaDisplay'
+export { MediaPage } from './MediaPage'
 export { Episodes } from './Episodes'
 export { StreamingReferences } from './StreamingReferences'
 export { YouTubePlayer } from './YouTubePlayer'

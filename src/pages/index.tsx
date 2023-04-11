@@ -1,10 +1,15 @@
+import { bannerImg } from '@/assets'
 import styles from '@/styles/Home.module.scss'
+import Image from 'next/image'
 import Link from 'next/link'
 
 export default function Home() {
 
   return (
     <div className={styles.app}>
+      <div className={styles.bannerContainer}>
+        <Image src={bannerImg} alt="anime banner" className={styles.bannerImg} />
+      </div>
       <div className={styles.container}>
         <h1 className={styles.logo}>Animes and Mangas</h1>
         <span className={styles.description}>You want to find anime and manga information? This is the right place</span>

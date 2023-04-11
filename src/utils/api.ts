@@ -1,4 +1,4 @@
-import { ANIMES_URL, TRENDING_ANIME_URL } from "@/data/api";
+import { ANIME_URL, MANGA_URL, TRENDING_ANIME_URL, TRENDING_MANGA_URL } from "@/data/api";
 import { Filters } from "@/types/filters";
 
 const getFilterString = (filters: Filters | undefined) => {
@@ -25,9 +25,13 @@ const getFilterString = (filters: Filters | undefined) => {
   return filterStr
 }
 
-export const animesUrl = (pageLimit: number=10, offset: number=0, filters?: Filters) => 
- `${ANIMES_URL}?page[limit]=${pageLimit}&page[offset]=${offset}${getFilterString(filters)}`
+export const animeUrl = (pageLimit: number=10, offset: number=0, filters?: Filters) => 
+ `${ANIME_URL}?page[limit]=${pageLimit}&page[offset]=${offset}${getFilterString(filters)}`
+
+ export const mangaUrl = (pageLimit: number=10, offset: number=0, filters?: Filters) => 
+ `${MANGA_URL}?page[limit]=${pageLimit}&page[offset]=${offset}${getFilterString(filters)}`
 
 export const trendingAnimeUrl = () => TRENDING_ANIME_URL
+export const trendingMangaUrl = () => TRENDING_MANGA_URL
 
-export const singleAnimeUrl = (id: string) => `${ANIMES_URL}/${id}`
+export const singleAnimeUrl = (id: string) => `${ANIME_URL}/${id}`
