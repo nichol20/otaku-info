@@ -23,11 +23,8 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
   const [ genres, setGenres ] = useState<Genre[]>([])
 
   const handleMediaDisplayClick = () => {
-    if(type === 'anime') {
-      Router.push(`/animes/${media.id}`)
-    } else {
-      Router.push(`/mangas/${media.id}`)
-    }
+    Router.push(`/${type}s/${media.id}`)
+    console.log(`/${type}s/${media.id}`)
   }
 
   const fetchGenres = async () => {

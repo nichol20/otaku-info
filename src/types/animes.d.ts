@@ -60,13 +60,13 @@ export interface Meta {
 }
 
 export interface Dimensions {
-  tiny:    Large
-  large:   Large
-  small:   Large
-  medium?: Large
+  tiny:    Dimension
+  large:   Dimension
+  small:   Dimension
+  medium?: Dimension
 }
 
-export interface Large {
+export interface Dimension {
   width:  number
   height: number
 }

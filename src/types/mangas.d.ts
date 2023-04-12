@@ -7,8 +7,8 @@ export interface Manga {
 }
 
 export interface Attributes {
-  createdAt:           Date
-  updatedAt:           Date
+  createdAt:           string
+  updatedAt:           string
   slug:                string
   synopsis:            string
   description:         string
@@ -20,8 +20,8 @@ export interface Attributes {
   ratingFrequencies:   { [key: string]: string }
   userCount:           number
   favoritesCount:      number
-  startDate:           Date | null
-  endDate:             Date | null
+  startDate:           string | null
+  endDate:             string | null
   nextRelease:         null
   popularityRank:      number
   ratingRank:          number | null
@@ -54,15 +54,15 @@ export interface CoverImageMeta {
 }
 
 export interface PurpleDimensions {
-  tiny:        Large
-  large:       Large
-  small:       Large
-  tiny_webp?:  Large
-  large_webp?: Large
-  small_webp?: Large
+  tiny:        Dimension
+  large:       Dimension
+  small:       Dimension
+  tiny_webp?:  Dimension
+  large_webp?: Dimension
+  small_webp?: Dimension
 }
 
-export interface Large {
+export interface Dimension {
   width:  number
   height: number
 }
@@ -86,10 +86,10 @@ export interface PosterImageMeta {
 }
 
 export interface FluffyDimensions {
-  tiny?:   Large
-  large?:  Large
-  small?:  Large
-  medium?: Large
+  tiny?:   Dimension
+  large?:  Dimension
+  small?:  Dimension
+  medium?: Dimension
 }
 
 export enum Status {
@@ -100,9 +100,10 @@ export enum Status {
 
 export interface Titles {
   en?:    null | string
-  en_jp:  string
+  en_jp?:  string
   en_us?: string
   ja_jp?: string
+  zh_cn?: string
 }
 
 export interface MangaLinks {

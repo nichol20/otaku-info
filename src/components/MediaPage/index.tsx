@@ -65,7 +65,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
         console.log(`${type}s request cancelled!`)
         return
       }
-      console.error('Failed to fetch new animes')
+      console.error(`Failed to fetch new ${type}s`)
     }
   }
 
@@ -123,7 +123,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
 
       <div className={styles.medias}>
         {medias.map((media, index) => (
-          <MediaDisplay key={index} media={media} />
+          <MediaDisplay key={index} media={media} type={type} />
         ))}
       </div>
       <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange}/>

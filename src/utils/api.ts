@@ -35,3 +35,4 @@ export const trendingAnimeUrl = () => TRENDING_ANIME_URL
 export const trendingMangaUrl = () => TRENDING_MANGA_URL
 
 export const singleAnimeUrl = (id: string) => `${ANIME_URL}/${id}`
+export const singleMangaUrl = (id: string) => `${MANGA_URL}/${id}`
