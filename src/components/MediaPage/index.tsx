@@ -126,7 +126,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
           <MediaDisplay key={index} media={media} type={type} />
         ))}
       </div>
-      <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange}/>
+      <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange} type={type}/>
     </div>
   )
 }

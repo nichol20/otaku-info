@@ -1,0 +1,15 @@
+@use '../../styles/' as *;
+
+.item {
+  font-size: .875em;
+
+  .name {
+    font-weight: 500;
+    color: $colors-primary-txt;
+    margin-right: 3px;
+  }
+
+  .value {
+    color: $colors-secondary-txt
+  }
+}

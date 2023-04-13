@@ -1,0 +1,27 @@
+@use './' as *;
+
+.error_page {
+  @include mixins-display-flex();
+  min-height: 100vh;
+  color: $colors-primary-txt;
+}
+
+.content {
+  @include mixins-display-flex();
+  flex-direction: column;
+  max-width: 256px;
+  width: 100%;
+  text-align: center;
+}
+
+.notFoundImg {
+  @include mixins-white-filter();
+}
+
+.title {
+  color: $colors-primary-txt;
+}
+
+.description {
+  color: $colors-secondary-txt;
+}

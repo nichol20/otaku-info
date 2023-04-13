@@ -1,5 +1,4 @@
-
-import { starIcon } from '@/assets'
+import { Info, InfoItem } from '@/components'
 import styles from '@/styles/MangaPage.module.scss'
 import { ApiResponse } from '@/types/api'
 import { Genre } from '@/types/genres'
@@ -7,8 +6,7 @@ import { Manga } from '@/types/mangas'
 import { singleMangaUrl } from '@/utils/api'
 import { getFromCache, setToCache } from '@/utils/sessionStorage'
 import axios, { CancelTokenSource } from 'axios'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
+import { Router, useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 
 export default function MangaPage() {
@@ -32,6 +30,11 @@ export default function MangaPage() {
         cancelToken: cancelToken.token
       })
 
+      if(!data.data) {
+        router.push('/404')
+        return
+      }
+
       setManga(data.data)
       setToCache(cacheKey, data.data)
       return data.data
@@ -43,7 +46,7 @@ export default function MangaPage() {
     }
   }
 
-  const fetchGenres = async (manga: Manga | undefined, cancelToken: CancelTokenSource) => {
+  const fetchGenres = async (manga: Manga, cancelToken: CancelTokenSource) => {
     const mangaId = typeof router.query.mangaId === 'string' ? router.query.mangaId : ''
     const cacheKey = `manga:${mangaId}:genres`
     const cachedGenres = getFromCache<Genre[]>(cacheKey)
@@ -52,8 +55,6 @@ export default function MangaPage() {
       setGenres(cachedGenres)
       return
     }
-
-    if(!manga) return
 
     try {
       const { data } = await axios.get<ApiResponse<Genre[]>>(manga.relationships.genres.links.related, {
@@ -71,12 +72,13 @@ export default function MangaPage() {
 
   const init = async (cancelToken: CancelTokenSource) => {
     const manga = await fetchManga(cancelToken)
+
+    if(!manga) return
     fetchGenres(manga, cancelToken)
   }
 
   useEffect(() => {
     const cancelToken = axios.CancelToken.source()
-    console.log(manga?.attributes.titles)
 
     if(router.isReady) {
       init(cancelToken)
@@ -93,43 +95,26 @@ export default function MangaPage() {
     <div className={styles.mangaPage}>
       <div className={styles.bannerContainer}>
         {manga?.attributes.coverImage?.original && <div className={styles.bgImgBox}>
-          <img src={manga?.attributes.coverImage?.original} alt="background" />
+          <img src={manga?.attributes.coverImage?.original} alt="cover" />
         </div>}
         <div className={styles.grid}>
           <h1 className={styles.title}>{manga?.attributes.titles.en_jp}</h1>
           <div className={styles.posterImgBox}>
-            <img src={manga?.attributes.posterImage.original} alt="" />
+            <img src={manga?.attributes.posterImage.original} alt="poster" />
           </div>
-      
-          <div className={styles.info}>
-            <div className={styles.meta}>
-              <span className={styles.release}>{releaseYear}</span>
-              {genres.length > 0 && <span>•</span>}
-              {genres.map((genre, index) => (
-                <span className={styles.genres} key={index}>
-                  {genre.attributes.name}
-                  {index !== genres.length - 1 ? ', ' : ''}
-                </span>
-                ))}
-            </div>
-            
-            <div className={styles.item}>
-              <span className={styles.name}>status: </span>
-              <span className={styles.value}>{manga?.attributes.status}</span>
-            </div>
-            <div className={styles.item}>
-              <span className={styles.name}>volumes: </span>
-              <span className={styles.value}>{manga?.attributes.volumeCount}</span>
-            </div>
-            <div className={styles.item}>
-              <span className={styles.name}>age guide: </span>
-              <span className={styles.value}>{manga?.attributes.ageRatingGuide}</span>
-            </div>
-            <div className={styles.ratingBox}>
-              <Image src={starIcon} alt="star" />
-              {manga?.attributes.averageRating}/100
-            </div>
-          </div>
+
+          <Info
+            releaseYear={releaseYear}
+            genres={genres}
+            averageRating={manga.attributes.averageRating}
+            popularityRank={manga.attributes.popularityRank}
+          >
+            <InfoItem name="status" value={manga.attributes.status} />
+            <InfoItem name="chapters" value={manga.attributes.chapterCount} />
+            <InfoItem name="volumes" value={manga.attributes.volumeCount} />
+            <InfoItem name="serialization" value={manga.attributes.serialization} />
+            <InfoItem name="age guide" value={manga.attributes.ageRatingGuide} />
+          </Info>
 
         </div>
       </div>

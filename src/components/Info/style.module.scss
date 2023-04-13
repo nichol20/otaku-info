@@ -1,0 +1,52 @@
+@use '../../styles/' as *;
+
+.info {
+  grid-area: info;
+  z-index: 2;
+  background-color: $colors-dark-shadow;
+  padding: 10px;
+  box-shadow: 1px 3px 10px 4px $colors-medium-shadow;
+  margin-bottom: 10px;
+  min-width: 300px;
+}
+
+.meta {
+  font-size: .875em;
+  font-weight: 500;
+  margin-bottom: 10px;
+  @include mixins-display-flex(flex-start);
+  gap: 5px;
+  width: 100%;
+  flex-wrap: wrap;
+  color: $colors-primary-txt; 
+}
+
+.classification {
+  @include mixins-display-flex(space-between, center);
+  margin-top: 5px;
+  width: 100%;
+}
+
+.ratingBox {
+  @include mixins-display-flex(flex-start, flex-end);
+  color: $colors-primary-txt;
+  gap: 3px;
+  font-size: .875em;
+
+  img {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+.popularityBox {
+  @include mixins-display-flex(flex-start, flex-end);
+  color: $colors-primary-txt;
+  gap: 3px;
+  font-size: .875em;
+  
+  img {
+    width: 25px;
+    height: 25px;
+  }
+}

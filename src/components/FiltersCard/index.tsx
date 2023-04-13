@@ -8,6 +8,7 @@ import { seasons, streamers, genres, ageRatings } from '@/data/filters'
 
 interface FiltersProps {
   onChange: (filter: Filters) => void
+  type?: 'manga' | 'anime'
 }
 
 export interface FiltersRef {
@@ -32,7 +33,7 @@ const INITIAL_FILTERS: FiltersCardFilters = {
 } 
 
 export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
-  ({ onChange }, ref) => {
+  ({ onChange, type="anime" }, ref) => {
   const [ showFilters, setShowFilters ] = useState(false)
   const [ filters, setFilters ] = useState<FiltersCardFilters>(INITIAL_FILTERS)
 
@@ -112,7 +113,7 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
             ))}
           </div>
         </div>
-        <div className={styles.category}>
+        { type==='anime' && <div className={styles.category}>
           <span className={styles.title}>Season</span>
           <div className={styles.values}>
             {seasons.map((season, index) => (
@@ -123,8 +124,8 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
               >{season}</button>
             ))}
           </div>
-        </div>
-        <div className={styles.category}>
+        </div>}
+        { type==='anime' && <div className={styles.category}>
           <span className={styles.title}>Streamer</span>
           <div className={styles.values}>
             {streamers.map((streamer, index) => (
@@ -135,9 +136,9 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
               >{streamer}</button>
             ))}
           </div>
-        </div>
+        </div>}
         
-        <div className={styles.category}>
+        { type==='anime' && <div className={styles.category}>
           <span className={styles.title}>Age rating</span>
           <div className={styles.values}>
             {ageRatings.map((ageRating, index) => (
@@ -148,7 +149,7 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
               >{ageRating}</button>
             ))}
           </div>
-        </div>
+        </div>}
 
       </div>
 
