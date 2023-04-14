@@ -12,6 +12,8 @@
   position: relative;
   width: 100%;
   @include mixins-display-flex();
+  overflow-y: hidden;
+  padding: 10px 0;
 }
 
 .bgImgBox {
