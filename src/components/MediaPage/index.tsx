@@ -37,13 +37,20 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
     const pageCacheKey = `${type}s-page:page`
     const cachedMedia = getFromCache<Media[]>(mediaCacheKey)
     const cachedPage = getFromCache<number>(pageCacheKey)
+    const filters = getFiltersFromCache()
+
+    if(filters && !Object.values(filters).every(v => v.length === 0) && cachedPage && cachedPage > page) {
+      url = mediaUrl(pageLimit, cachedPage, filters)
+      filtersCardRef.current?.setCurrentFilters(filters)
+
+    }
 
     if(cachedMedia && cachedPage && cachedPage > page) {
       setMedias(cachedMedia)
       setPage(cachedPage)
       return
     }
-
+    
     try {
       const { data } = await axios.get<ApiResponse<Media[]>>(url, { cancelToken: cancelToken?.token })
 
@@ -69,22 +76,49 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
     }
   }
 
-  const handleSearch = async (value: string) => {
+  const handleSearch = (value: string) => {
     const selectedFilters = filtersCardRef.current?.getSelectedFilters()
-    setPage(0)
-    setMedias([])
+    const newFilters = { ...selectedFilters, text: value }
+
     setSearchValue(value)
-    await fetchMedias(mediaUrl(pageLimit, 0, { ...selectedFilters, text: value }))
+    setMedias([])
+    setFiltersToCache(newFilters)
+
+    if(Object.values(newFilters).every(v => v.length === 0)) {
+      setPage(-1)
+      fetchMedias(trendingMediaUrl())
+      return
+    }
+    setPage(0)
+    fetchMedias(mediaUrl(pageLimit, 0, newFilters))
   }
 
-  const handleFiltersChange = debounce(async (filters: Filters) => {
-    setPage(0)
+  const handleFiltersChange = debounce((filters: Filters) => {
+    const newFilters = { ...filters, text: searchValue }
+    
     setMedias([])
-    await fetchMedias(mediaUrl(pageLimit, 0, { ...filters, text: searchValue }))
+    setFiltersToCache(newFilters)
+
+    if(Object.values(newFilters).every(v => v.length === 0)) {
+      setPage(-1)
+      fetchMedias(trendingMediaUrl())
+      return
+    }
+
+    setPage(0)
+    fetchMedias(mediaUrl(pageLimit, 0, newFilters))
   }, 1000)
 
   const handleFiltersBtnClick = () => {
     filtersCardRef.current?.show()
+  }
+
+  const getFiltersFromCache = () => {
+    return getFromCache<Filters>(`${type}s-page:filters`)
+  }
+
+  const setFiltersToCache = (filters: Filters) => {
+    setToCache(`${type}s-page:filters`, filters)
   }
 
   useEffect(() => {

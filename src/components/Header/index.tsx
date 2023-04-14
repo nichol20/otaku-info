@@ -13,6 +13,12 @@ export const Header = () => {
     return router.pathname === path ? styles.active : ''
   }
 
+  const toggleMenu = (event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const buttonEl = event.currentTarget
+
+    buttonEl.classList.toggle(styles.active)
+  }
+
   useEffect(() => {
     const handleScroll = () => {
       const currentScrollPos = window.scrollY
@@ -26,10 +32,13 @@ export const Header = () => {
 
   return (
     <div className={`${styles.header} ${visible ? '' : styles.hidden}`}>
-      <Link href='/' className={styles.logo}>Animes and Mangas</Link>
-      <div className={styles.linkList}>
-        <Link href="/animes" className={getLinkClass('/animes')}>Animes</Link>
-        <Link href="/mangas" className={getLinkClass('/mangas')}>Mangas</Link>
+      <div className={styles.content}>
+        <button className={styles.toggleMenu} onClick={toggleMenu}></button>
+        <Link href='/' className={styles.logo}>Otaku Info</Link>
+        <div className={styles.linkList}>
+          <Link href="/animes" className={getLinkClass('/animes')}>Animes</Link>
+          <Link href="/mangas" className={getLinkClass('/mangas')}>Mangas</Link>
+        </div>
       </div>
     </div>
   )

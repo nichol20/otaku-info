@@ -24,7 +24,6 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
 
   const handleMediaDisplayClick = () => {
     Router.push(`/${type}s/${media.id}`)
-    console.log(`/${type}s/${media.id}`)
   }
 
   const fetchGenres = async () => {
@@ -43,7 +42,6 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
       fetchGenres()
     }
   }, [])
-
 
   return (
     <div className={styles.mediaDisplay} onClick={handleMediaDisplayClick}>

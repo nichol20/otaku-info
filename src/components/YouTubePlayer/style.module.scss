@@ -18,3 +18,26 @@
     border: none;
   }
 }
+
+.closeBtn {
+  position: fixed;
+  top: 10px;
+  right: 10px;
+  @include mixins-display-flex();
+  width: 30px;
+  height: 30px;
+  background-color: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+
+  &:hover {
+    background-color: $colors-light-glow;
+  }
+  
+  img {
+    width: 100%;
+    height: 100%;
+    @include mixins-gray-filter();
+  }
+}

@@ -8,6 +8,12 @@
   box-shadow: 1px 3px 10px 4px $colors-medium-shadow;
   margin-bottom: 10px;
   min-width: 300px;
+  @include mixins-display-flex(space-between, flex-start);
+  flex-direction: column;
+
+  @include medias-media('phone') {
+    min-width: auto;
+  }
 }
 
 .meta {

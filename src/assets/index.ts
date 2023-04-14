@@ -5,6 +5,8 @@ export { default as searchIcon } from './images/search.svg'
 export { default as filterIcon } from './images/filter.svg'
 export { default as bannerImg } from './images/banner.png'
 export { default as notFoundImg } from './images/404.png'
+export { default as closeIcon } from './images/close.svg'
+export { default as menuIcon } from './images/menu.svg'
 
 // streaming logos
 export { default as amazonIcon } from './images/streamingLogos/amazon.svg'

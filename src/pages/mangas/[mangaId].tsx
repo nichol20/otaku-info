@@ -1,4 +1,4 @@
-import { Info, InfoItem } from '@/components'
+import { Header, Info, InfoItem } from '@/components'
 import styles from '@/styles/MangaPage.module.scss'
 import { ApiResponse } from '@/types/api'
 import { Genre } from '@/types/genres'
@@ -93,6 +93,7 @@ export default function MangaPage() {
 
   return (
     <div className={styles.mangaPage}>
+      <Header />
       <div className={styles.bannerContainer}>
         {manga?.attributes.coverImage?.original && <div className={styles.bgImgBox}>
           <img src={manga?.attributes.coverImage?.original} alt="cover" />

@@ -1,6 +1,8 @@
 import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react'
 
 import styles from './style.module.scss'
+import { closeIcon } from '@/assets'
+import Image from 'next/image'
 
 interface YouTubePlayerProps {
   videoId: string | null
@@ -50,6 +52,9 @@ export const YouTubePlayer = forwardRef<YouTubePlayerRef,YouTubePlayerProps>(
 
   return (
     <div className={styles.container} onClick={handleClick}>
+      <button className={styles.closeBtn} onClick={close}>
+        <Image src={closeIcon} alt="close" />
+      </button>
       <iframe
        src={`https://www.youtube.com/embed/${videoId}?autoplay=1&mute=1`}
        allowFullScreen

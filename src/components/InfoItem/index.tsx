@@ -9,6 +9,7 @@ interface InfoItemProps {
 
 export const InfoItem = ({ name, value }: InfoItemProps) => {
   if(!value) return null
+
   return (
     <div className={styles.item}>
       <span className={styles.name}>{name}: </span>

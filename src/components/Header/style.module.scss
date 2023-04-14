@@ -1,10 +1,11 @@
 @use '../../styles/' as *;
 
+$menu-icon: '../../assets/images/menu.svg';
+$close-icon: '../../assets/images/close.svg';
+
 .header {
   position: fixed;
-  @include mixins-display-flex(space-between);
   width: 100%;
-  padding: 15px 30px 15px 20px;
   top: 0;
   transition: top 300ms;
   background-color: $colors-primary-bg;
@@ -15,15 +16,37 @@
   }
 }
 
+.content {
+  position: relative;
+  @include mixins-display-flex(space-between);
+  padding: 15px 30px 15px 20px;
+}
+
 .logo {
   font-size: 1.5em;
   color: $colors-primary-txt;
   text-decoration: none;
+
+  @include medias-media("phone") {
+    font-size: 1em;
+  }
 }
 
 .linkList {
   @include mixins-display-flex();
   gap: 20px;
+
+  @include medias-media("tablet") {
+    display: none;
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100vh;
+    flex-direction: column;
+    background-color: $colors-primary-bg;
+    font-size: 1.5em;
+  }
 
   a {
     list-style: none;
@@ -39,5 +62,32 @@
     &.active {
       color: $colors-primary-txt;
     }
+  }
+}
+
+.toggleMenu {
+  position: absolute;
+  right: 14px;
+  top: 15px;
+  width: 35px;
+  height: 35px;
+  border: none;
+  background: url($menu-icon);
+  background-repeat: no-repeat;
+  background-position: center; 
+  @include mixins-white-filter();
+  z-index: 1000;
+  display: none;
+
+  &.active {
+    background: url($close-icon)
+  }
+
+  &.active ~ .linkList {
+    display: flex;
+  }
+
+  @include medias-media("tablet") {
+    display: block;
   }
 }

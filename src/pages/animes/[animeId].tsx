@@ -9,7 +9,7 @@ import styles from '@/styles/AnimePage.module.scss'
 import Image from "next/image"
 import { playIcon } from "@/assets"
 import { Genre } from "@/types/genres"
-import { Episodes, Info, InfoItem, StreamingReferences, YouTubePlayer } from "@/components"
+import { Episodes, Header, Info, InfoItem, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
 import { ApiResponse } from "@/types/api"
 import { getFromCache, setToCache } from "@/utils/sessionStorage"
@@ -103,6 +103,7 @@ export default function AnimePage() {
 
   return(
     <div className={styles.animePage}>
+      <Header />
       <div className={styles.bannerContainer}>
         {anime?.attributes.coverImage?.original && <div className={styles.bgImgBox}>
           <img src={anime?.attributes.coverImage?.original} alt="cover" />
@@ -121,8 +122,10 @@ export default function AnimePage() {
           >
               <InfoItem name="show type" value={anime.attributes.showType} />
               <InfoItem name="episodes" value={anime.attributes.episodeCount} />
-              <InfoItem name="runtime" value={`${anime.attributes.episodeLength}min`} />
-              <InfoItem name="total runtime" value={`${anime.attributes.totalLength}min`} />
+              <InfoItem name="runtime" value={
+                anime.attributes.episodeLength ? `${anime.attributes.episodeLength}min` : null} />
+              <InfoItem name="total runtime" value={
+                anime.attributes.totalLength ? `${anime.attributes.totalLength}min`: null} />
               <InfoItem name="status" value={anime.attributes.status} />
               <InfoItem name="nsfw" value={anime.attributes.nsfw ? 'yes' : 'no'} />
               <InfoItem name="age guide" value={anime.attributes.ageRatingGuide} />

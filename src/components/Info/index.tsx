@@ -26,7 +26,9 @@ export const Info = ({ genres, releaseYear, children, averageRating, popularityR
           </span>
           ))}
       </div>
-      {children}
+      <div className={styles.children}>
+        {children}
+      </div>
       <div className={styles.classification}>
         <div className={styles.ratingBox}>
           <Image src={starIcon} alt="star" />

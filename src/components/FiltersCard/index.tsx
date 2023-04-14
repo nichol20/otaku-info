@@ -15,6 +15,7 @@ export interface FiltersRef {
   show: () => void
   close: () => void
   getSelectedFilters: () => FiltersCardFilters
+  setCurrentFilters: (filters: Filters) => void
 }
 
 interface FiltersCardFilters {
@@ -90,10 +91,17 @@ export const FiltersCard = forwardRef<FiltersRef, FiltersProps>(
     return filters
   }
 
+  const setCurrentFilters = (filters: Filters) => {
+    const {text, ...rest} = filters
+
+    setFilters(prev => ({ ...prev, ...rest }))
+  }
+
   useImperativeHandle(ref, () => ({
     show,
     close,
-    getSelectedFilters
+    getSelectedFilters,
+    setCurrentFilters
   }))
 
   if(!showFilters) return null

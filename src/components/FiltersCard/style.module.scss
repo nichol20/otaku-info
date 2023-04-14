@@ -20,7 +20,6 @@
 .values {
   @include mixins-display-flex();
   flex-wrap: wrap;
-  width: 400px;
   gap: 6px;
 }
 
