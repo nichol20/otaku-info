@@ -1,18 +1,18 @@
 import axios, { CancelTokenSource } from "axios"
 import { useRouter } from "next/router"
 import { useEffect, useRef, useState } from "react"
+import Image from "next/image"
 
 import { Anime } from "@/types/animes"
 import { singleAnimeUrl } from "@/utils/api"
-
-import styles from '@/styles/AnimePage.module.scss'
-import Image from "next/image"
-import { playIcon } from "@/assets"
+import { getFromCache, setToCache } from "@/utils/sessionStorage"
 import { Genre } from "@/types/genres"
 import { Episodes, Header, Info, InfoItem, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
 import { ApiResponse } from "@/types/api"
-import { getFromCache, setToCache } from "@/utils/sessionStorage"
+
+import { playIcon } from "@/assets"
+import styles from '@/styles/AnimePage.module.scss'
 
 export default function AnimePage() {
   const router = useRouter()

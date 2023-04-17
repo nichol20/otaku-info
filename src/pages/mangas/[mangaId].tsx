@@ -1,13 +1,15 @@
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import axios, { CancelTokenSource } from 'axios'
+
 import { Header, Info, InfoItem } from '@/components'
-import styles from '@/styles/MangaPage.module.scss'
 import { ApiResponse } from '@/types/api'
 import { Genre } from '@/types/genres'
 import { Manga } from '@/types/mangas'
 import { singleMangaUrl } from '@/utils/api'
 import { getFromCache, setToCache } from '@/utils/sessionStorage'
-import axios, { CancelTokenSource } from 'axios'
-import { Router, useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+
+import styles from '@/styles/MangaPage.module.scss'
 
 export default function MangaPage() {
   const router = useRouter()
