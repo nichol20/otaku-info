@@ -6,6 +6,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <Head>
+        <link rel="icon" type="image/svg+xml" href="/naruto.svg" />
         <title>Otaku info</title>
       </Head>
       <Component {...pageProps} />

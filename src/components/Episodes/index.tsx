@@ -8,6 +8,7 @@ import styles from './style.module.scss'
 import { useInfiniteScrolling } from '@/hooks/useIniniteScrolling'
 import { useRouter } from 'next/router'
 import { getFromCache, setToCache } from '@/utils/sessionStorage'
+import { Loading } from '../Loading'
 
 interface EpisodesProps {
   dataUrl: string
@@ -19,6 +20,8 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
   const router = useRouter()
   const [ episodes, setEpisodes ] = useState<Episode[]>([])
   const [ page, setPage ] = useState(0)
+  const [ isFetchingEpisode, setIsFetchingEpisode ] = useState(false)
+  const [ isAllFetched, setIsAllFetched ] = useState(false)
 
   const fetchEpisodes = async (url: string, cancelToken?: CancelTokenSource) => {
     const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
@@ -33,10 +36,18 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
       return
     }
 
+    if(isAllFetched) {
+      return
+    }
+
+    setIsFetchingEpisode(true)
     try {
       const response = await axios.get<ApiResponse<Episode[]>>(url, { cancelToken: cancelToken?.token })
 
-      if(response.data.data.length === 0) return
+      if(response.data.data.length === 0) {
+        setIsAllFetched(true)
+        return
+      }
 
       setEpisodes(prev => {
         const newState = [...prev, ...response.data.data]
@@ -54,6 +65,8 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
       }
       console.error(error)
       return
+    } finally {
+      setIsFetchingEpisode(false)
     }
   }
 
@@ -65,7 +78,7 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
     return () => {
       cancelToken.cancel()
     }
-  }, [ page ])
+  }, [ page, isAllFetched ])
 
   return (
     <div className={styles.container}>
@@ -84,6 +97,7 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
             </div>
         </div>
       ))}
+      <Loading isLoading={isFetchingEpisode} />
     </div>
   )
 }

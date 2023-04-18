@@ -1,0 +1,11 @@
+@use '../../styles/' as *;
+
+.loading {
+  width: 100%;
+  height: 100%;
+  @include mixins-display-flex();
+}
+
+.spinner {
+  display: block;
+}

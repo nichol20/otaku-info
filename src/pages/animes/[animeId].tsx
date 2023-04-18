@@ -7,7 +7,7 @@ import { Anime } from "@/types/animes"
 import { singleAnimeUrl } from "@/utils/api"
 import { getFromCache, setToCache } from "@/utils/sessionStorage"
 import { Genre } from "@/types/genres"
-import { Episodes, Header, Info, InfoItem, StreamingReferences, YouTubePlayer } from "@/components"
+import { Episodes, Header, Info, InfoItem, Loading, StreamingReferences, YouTubePlayer } from "@/components"
 import { YouTubePlayerRef } from "@/components/YouTubePlayer"
 import { ApiResponse } from "@/types/api"
 
@@ -99,7 +99,7 @@ export default function AnimePage() {
     }
   }, [ router.isReady ])
 
-  if(!anime) return null
+  if(!anime) return <Loading />
 
   return(
     <div className={styles.animePage}>

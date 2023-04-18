@@ -4,10 +4,9 @@ import { useEffect, useRef, useState } from 'react'
 
 import { Anime } from '@/types/animes'
 import { animeUrl, mangaUrl, trendingAnimeUrl, trendingMangaUrl } from '@/utils/api'
-import { Header, MediaDisplay, SearchInput } from '@/components'
+import { Header, Loading, MediaDisplay, SearchInput, FiltersCard } from '@/components'
 import { ApiResponse } from '@/types/api'
 import { useInfiniteScrolling } from '@/hooks/useIniniteScrolling'
-import { FiltersCard } from '@/components' 
 import { Filters } from '@/types/filters'
 import { FiltersRef } from '@/components/FiltersCard'
 import { debounce } from '@/utils/debounce'
@@ -27,6 +26,8 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
   const [ page, setPage ] = useState(-1)
   const [ medias, setMedias ] = useState<Media[]>([])
   const [ searchValue, setSearchValue ] = useState('')
+  const [ isFetchingMedia, setIsFetchingMedia ] = useState(false)
+  const [ isAllFetched, setIsAllFetched ] = useState(false)
   const mediaUrl = type === 'anime' ? animeUrl : mangaUrl
   const trendingMediaUrl = type === 'anime' ? trendingAnimeUrl : trendingMangaUrl
 
@@ -50,11 +51,17 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
       setPage(cachedPage)
       return
     }
+
+    if(isAllFetched) return
     
+    setIsFetchingMedia(true)
     try {
       const { data } = await axios.get<ApiResponse<Media[]>>(url, { cancelToken: cancelToken?.token })
 
-      if(data.data.length === 0) return
+      if(data.data.length === 0) {
+        setIsAllFetched(true)
+        return
+      }
 
       setMedias(prev => {
         const newState = [...prev, ...data.data]
@@ -73,6 +80,8 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
         return
       }
       console.error(`Failed to fetch new ${type}s`)
+    } finally {
+      setIsFetchingMedia(false)
     }
   }
 
@@ -141,7 +150,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
     return () => {
       cancelToken.cancel()
     }
-  }, [ page ])
+  }, [ page, isAllFetched ])
 
   return (
     <div className={styles.mediaPage}>
@@ -160,6 +169,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
           <MediaDisplay key={index} media={media} type={type} />
         ))}
       </div>
+      <Loading isLoading={isFetchingMedia}/>
       <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange} type={type}/>
     </div>
   )

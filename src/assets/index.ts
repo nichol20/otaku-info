@@ -7,6 +7,7 @@ export { default as bannerImg } from './images/banner.png'
 export { default as notFoundImg } from './images/404.png'
 export { default as closeIcon } from './images/close.svg'
 export { default as menuIcon } from './images/menu.svg'
+export { default as animatedSpinnerIcon } from './images/animated-spinner.svg'
 
 // streaming logos
 export { default as amazonIcon } from './images/streamingLogos/amazon.svg'
