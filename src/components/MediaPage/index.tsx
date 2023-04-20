@@ -27,7 +27,6 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
   const [ medias, setMedias ] = useState<Media[]>([])
   const [ searchValue, setSearchValue ] = useState('')
   const [ isFetchingMedia, setIsFetchingMedia ] = useState(false)
-  const [ isAllFetched, setIsAllFetched ] = useState(false)
   const mediaUrl = type === 'anime' ? animeUrl : mangaUrl
   const trendingMediaUrl = type === 'anime' ? trendingAnimeUrl : trendingMangaUrl
 
@@ -51,17 +50,10 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
       setPage(cachedPage)
       return
     }
-
-    if(isAllFetched) return
     
     setIsFetchingMedia(true)
     try {
       const { data } = await axios.get<ApiResponse<Media[]>>(url, { cancelToken: cancelToken?.token })
-
-      if(data.data.length === 0) {
-        setIsAllFetched(true)
-        return
-      }
 
       setMedias(prev => {
         const newState = [...prev, ...data.data]
@@ -76,10 +68,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
 
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log(`${type}s request cancelled!`)
-        return
       }
-      console.error(`Failed to fetch new ${type}s`)
     } finally {
       setIsFetchingMedia(false)
     }
@@ -150,7 +139,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
     return () => {
       cancelToken.cancel()
     }
-  }, [ page, isAllFetched ])
+  }, [ page ])
 
   return (
     <div className={styles.mediaPage}>

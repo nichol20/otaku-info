@@ -43,7 +43,6 @@ export default function MangaPage() {
       
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log('manga request cancelled!')
       }
     }
   }
@@ -67,7 +66,6 @@ export default function MangaPage() {
       setGenres(data.data)
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log('genres request cancelled!')
       }
     }
   }

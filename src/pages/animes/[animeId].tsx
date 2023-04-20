@@ -47,7 +47,6 @@ export default function AnimePage() {
       
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log('anime request cancelled!')
       }
     }
   }
@@ -71,7 +70,6 @@ export default function AnimePage() {
       setGenres(data.data)
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log('genres request cancelled!')
       }
     }
   }

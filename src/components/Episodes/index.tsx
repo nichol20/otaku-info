@@ -61,10 +61,8 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
       })
     } catch (error) {
       if(axios.isCancel(error)) {
-        console.log('episodes request cancelled!')
+        
       }
-      console.error(error)
-      return
     } finally {
       setIsFetchingEpisode(false)
     }
