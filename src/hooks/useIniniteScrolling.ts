@@ -20,8 +20,6 @@ export const useInfiniteScrolling: UseInfiniteScrolling = (
       // The scrollHeight returns the height of an element
       const scrollHeight = document.documentElement.scrollHeight;
 
-      console.log({ scrollTop, windowHeight, scrollHeight });
-
       if (scrollTop + windowHeight >= scrollHeight) {
         const cb = onReachBottom();
         cleanupFunction = cb ? cb : () => {};
