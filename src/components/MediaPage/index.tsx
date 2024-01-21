@@ -129,7 +129,9 @@ export const MediaPage = <Media extends Anime | Manga>({ type = 'anime' }: Media
   }
 
   const getFiltersFromCache = () => {
-    return getFromCache<Filters>(`${type}s-page:filters`)
+    if (typeof window !== "undefined") {
+      return getFromCache<Filters>(`${type}s-page:filters`)
+    }
   }
 
   const setFiltersToCache = (filters: Filters) => {
