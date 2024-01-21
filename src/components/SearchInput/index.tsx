@@ -7,7 +7,7 @@ import { searchIcon } from "@/assets";
 
 interface SearchInputProps {
   onSearch: (value: string) => void
-  defaultValue: string
+  defaultValue?: string | undefined
   delay: number
 }
 
