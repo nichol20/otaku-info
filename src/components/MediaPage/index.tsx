@@ -20,40 +20,47 @@ interface MediaPageProps {
   type?: 'anime' | 'manga'
 }
 
-const pageLimit = 12 
+const pageLimit = 12
 
-export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPageProps) => {
-  const [ page, setPage ] = useState(-1)
-  const [ medias, setMedias ] = useState<Media[]>([])
-  const [ searchValue, setSearchValue ] = useState('')
-  const [ isFetchingMedia, setIsFetchingMedia ] = useState(false)
+export const MediaPage = <Media extends Anime | Manga>({ type = 'anime' }: MediaPageProps) => {
+  const mediaCacheKey = `${type}s-page:${type}s`
+  const pageCacheKey = `${type}s-page:page`
+
+  const [page, setPage] = useState(-1)
+  const [medias, setMedias] = useState<Media[]>([])
+  const [searchValue, setSearchValue] = useState('')
+  const [isFetchingMedia, setIsFetchingMedia] = useState(false)
+  const [isEndOfScroll, setIsEndOfScroll] = useState(false)
   const mediaUrl = type === 'anime' ? animeUrl : mangaUrl
   const trendingMediaUrl = type === 'anime' ? trendingAnimeUrl : trendingMangaUrl
 
   const filtersCardRef = useRef<FiltersRef>(null)
 
   const fetchMedias = async (url: string, cancelToken?: CancelTokenSource) => {
-    const mediaCacheKey = `${type}s-page:${type}s`
-    const pageCacheKey = `${type}s-page:page`
     const cachedMedia = getFromCache<Media[]>(mediaCacheKey)
     const cachedPage = getFromCache<number>(pageCacheKey)
     const filters = getFiltersFromCache()
 
-    if(filters && !Object.values(filters).every(v => v.length === 0) && cachedPage && cachedPage > page) {
-      url = mediaUrl(pageLimit, cachedPage, filters)
-      filtersCardRef.current?.setCurrentFilters(filters)
+    const hasFilters = filters && !Object.values(filters).every(v => v.length === 0)
+    const isCachedPageGreaterThanPage = typeof cachedPage === 'number' && cachedPage > page
 
-    }
-
-    if(cachedMedia && cachedPage && cachedPage > page) {
+    if (cachedMedia && isCachedPageGreaterThanPage) {
       setMedias(cachedMedia)
       setPage(cachedPage)
+
+      if (hasFilters) {
+        filtersCardRef.current?.setCurrentFilters(filters)
+        setSearchValue(filters.text || "")
+      }
       return
     }
-    
+
     setIsFetchingMedia(true)
     try {
       const { data } = await axios.get<ApiResponse<Media[]>>(url, { cancelToken: cancelToken?.token })
+      if (data.links && !data.links.next) {
+        setIsEndOfScroll(true)
+      }
 
       setMedias(prev => {
         const newState = [...prev, ...data.data]
@@ -67,7 +74,10 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
       })
 
     } catch (error) {
-      if(axios.isCancel(error)) {
+      if (axios.isCancel(error)) {
+        console.log('Request cancelled')
+      } else {
+        console.error(error)
       }
     } finally {
       setIsFetchingMedia(false)
@@ -77,27 +87,34 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
   const handleSearch = (value: string) => {
     const selectedFilters = filtersCardRef.current?.getSelectedFilters()
     const newFilters = { ...selectedFilters, text: value }
+    const hasFilters = !Object.values(newFilters).every(v => v.length === 0)
 
     setSearchValue(value)
+
     setMedias([])
     setFiltersToCache(newFilters)
+    setIsEndOfScroll(false)
 
-    if(Object.values(newFilters).every(v => v.length === 0)) {
+    if (!hasFilters) {
       setPage(-1)
       fetchMedias(trendingMediaUrl())
       return
     }
+
     setPage(0)
     fetchMedias(mediaUrl(pageLimit, 0, newFilters))
   }
 
   const handleFiltersChange = debounce((filters: Filters) => {
     const newFilters = { ...filters, text: searchValue }
-    
+    const hasFilters = !Object.values(newFilters).every(v => v.length === 0)
+
     setMedias([])
     setFiltersToCache(newFilters)
+    filtersCardRef.current?.setCurrentFilters(newFilters)
+    setIsEndOfScroll(false)
 
-    if(Object.values(newFilters).every(v => v.length === 0)) {
+    if (!hasFilters) {
       setPage(-1)
       fetchMedias(trendingMediaUrl())
       return
@@ -122,7 +139,7 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
   useEffect(() => {
     const cancelToken = axios.CancelToken.source()
 
-    if(medias.length === 0) {
+    if (medias.length === 0) {
       fetchMedias(trendingMediaUrl(), cancelToken)
     }
 
@@ -132,21 +149,26 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
   }, [])
 
   useInfiniteScrolling(() => {
-    const cancelToken = axios.CancelToken.source()
+    if (!isFetchingMedia && !isEndOfScroll) {
+      const filters = {
+        ...filtersCardRef.current?.getSelectedFilters(),
+        text: searchValue
+      }
 
-    fetchMedias(mediaUrl(pageLimit, page * pageLimit, { text: searchValue }), cancelToken)
+      // for some reason, kitsu api repeats the data from the first page on the second when there are filters (i think)
+      const hasFilters = !Object.values(filters).every(v => v.length === 0)
+      const offset = hasFilters ? (page + 1) * pageLimit : page * pageLimit
 
-    return () => {
-      cancelToken.cancel()
+      fetchMedias(mediaUrl(pageLimit, offset, filters))
     }
-  }, [ page ])
+  }, [page, isFetchingMedia, isEndOfScroll])
 
   return (
     <div className={styles.mediaPage}>
       <Header />
       <div className={styles.actions}>
         <div className={styles.spacer}></div>
-        <SearchInput onSearch={handleSearch} delay={500} />
+        <SearchInput onSearch={handleSearch} delay={800} defaultValue={getFiltersFromCache()?.text} />
         <button className={styles.filtersBtn} onClick={handleFiltersBtnClick}>
           <Image src={filterIcon} alt="filter" />
           Filters
@@ -158,8 +180,8 @@ export const MediaPage = <Media extends Anime | Manga>({ type='anime' }: MediaPa
           <MediaDisplay key={index} media={media} type={type} />
         ))}
       </div>
-      <Loading isLoading={isFetchingMedia}/>
-      <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange} type={type}/>
+      <Loading isLoading={isFetchingMedia} />
+      <FiltersCard ref={filtersCardRef} onChange={handleFiltersChange} type={type} />
     </div>
   )
 }
