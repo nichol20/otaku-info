@@ -17,10 +17,10 @@ interface MediaDisplayProps {
 
 const maxGenresNum = 3
 
-export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
+export const MediaDisplay = ({ media, type = 'anime' }: MediaDisplayProps) => {
   const { attributes: { startDate } } = media
   const releaseYear = startDate ? new Date(startDate).getFullYear() : null
-  const [ genres, setGenres ] = useState<Genre[]>([])
+  const [genres, setGenres] = useState<Genre[]>([])
 
   const handleMediaDisplayClick = () => {
     Router.push(`/${type}s/${media.id}`)
@@ -38,7 +38,7 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
   }
 
   useEffect(() => {
-    if(genres.length === 0) {
+    if (genres.length === 0) {
       fetchGenres()
     }
   }, [])
@@ -48,7 +48,7 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
       <div className={styles.content}>
         <div className={styles.posterImageBox}>
           {media.attributes.posterImage?.medium &&
-            <img src={media.attributes.posterImage.medium} alt="poster image" className={styles.posterImage}/>}
+            <img src={media.attributes.posterImage.medium} alt="poster image" className={styles.posterImage} />}
         </div>
         <div className={styles.details}>
           <div className={styles.title}>
@@ -62,7 +62,7 @@ export const MediaDisplay = ({ media, type='anime' }: MediaDisplayProps) => {
                 {genre.attributes.name}
                 {index !== maxGenresNum - 1 ? ', ' : ''}
               </span>
-              ))}
+            ))}
           </div>
           <div className={styles.synopsis}>
             {media.attributes.synopsis}

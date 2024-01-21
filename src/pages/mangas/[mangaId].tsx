@@ -13,8 +13,8 @@ import styles from '@/styles/MangaPage.module.scss'
 
 export default function MangaPage() {
   const router = useRouter()
-  const [ manga, setManga ] = useState<Manga>()
-  const [ genres, setGenres ] = useState<Genre[]>([])
+  const [manga, setManga] = useState<Manga>()
+  const [genres, setGenres] = useState<Genre[]>([])
   const releaseYear = manga?.attributes.startDate ? new Date(manga.attributes.startDate).getFullYear() : ''
 
   const fetchManga = async (cancelToken: CancelTokenSource) => {
@@ -22,17 +22,17 @@ export default function MangaPage() {
     const cacheKey = `manga:${mangaId}`
     const cachedManga = getFromCache<Manga>(cacheKey)
 
-    if(cachedManga) {
+    if (cachedManga) {
       setManga(cachedManga)
       return cachedManga
     }
-    
+
     try {
-      const { data } = await axios.get<ApiResponse<Manga>>(singleMangaUrl(mangaId), { 
+      const { data } = await axios.get<ApiResponse<Manga>>(singleMangaUrl(mangaId), {
         cancelToken: cancelToken.token
       })
 
-      if(!data.data) {
+      if (!data.data) {
         router.push('/404')
         return
       }
@@ -40,9 +40,9 @@ export default function MangaPage() {
       setManga(data.data)
       setToCache(cacheKey, data.data)
       return data.data
-      
+
     } catch (error) {
-      if(axios.isCancel(error)) {
+      if (axios.isCancel(error)) {
       }
     }
   }
@@ -52,7 +52,7 @@ export default function MangaPage() {
     const cacheKey = `manga:${mangaId}:genres`
     const cachedGenres = getFromCache<Genre[]>(cacheKey)
 
-    if(cachedGenres) {
+    if (cachedGenres) {
       setGenres(cachedGenres)
       return
     }
@@ -61,11 +61,11 @@ export default function MangaPage() {
       const { data } = await axios.get<ApiResponse<Genre[]>>(manga.relationships.genres.links.related, {
         cancelToken: cancelToken.token
       })
-  
+
       setToCache(cacheKey, data.data)
       setGenres(data.data)
     } catch (error) {
-      if(axios.isCancel(error)) {
+      if (axios.isCancel(error)) {
       }
     }
   }
@@ -73,23 +73,23 @@ export default function MangaPage() {
   const init = async (cancelToken: CancelTokenSource) => {
     const manga = await fetchManga(cancelToken)
 
-    if(!manga) return
+    if (!manga) return
     fetchGenres(manga, cancelToken)
   }
 
   useEffect(() => {
     const cancelToken = axios.CancelToken.source()
 
-    if(router.isReady) {
+    if (router.isReady) {
       init(cancelToken)
     }
 
     return () => {
       cancelToken.cancel()
     }
-  }, [ router.isReady ])
+  }, [router.isReady])
 
-  if(!manga) return null
+  if (!manga) return null
 
   return (
     <div className={styles.mangaPage}>

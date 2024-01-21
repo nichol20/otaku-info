@@ -6,8 +6,8 @@ import { useRouter } from 'next/router'
 
 export const Header = () => {
   const router = useRouter()
-  const [ scrollPos, setScrollPos ] = useState(0)
-  const [ visible, setVisible ] = useState(true)
+  const [scrollPos, setScrollPos] = useState(0)
+  const [visible, setVisible] = useState(true)
 
   const getLinkClass = (path: string): string => {
     return router.pathname === path ? styles.active : ''

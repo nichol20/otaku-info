@@ -1,33 +1,40 @@
-import { amazonIcon, crunchyrollIcon, funimationIcon, huluIcon, netflixIcon, tubiIcon } from "@/assets"
+import {
+  amazonIcon,
+  crunchyrollIcon,
+  funimationIcon,
+  huluIcon,
+  netflixIcon,
+  tubiIcon,
+} from "@/assets";
 
 interface StreamingLogo {
-  icon:     string
-  streamer: string
+  icon: string;
+  streamer: string;
 }
 
 export const streamingLogos: StreamingLogo[] = [
   {
     icon: amazonIcon,
-    streamer: 'amazon'
+    streamer: "amazon",
   },
   {
     icon: crunchyrollIcon,
-    streamer: 'crunchyroll'
+    streamer: "crunchyroll",
   },
   {
     icon: funimationIcon,
-    streamer: 'funimation'
+    streamer: "funimation",
   },
   {
     icon: huluIcon,
-    streamer:'hulu'
+    streamer: "hulu",
   },
   {
     icon: tubiIcon,
-    streamer: 'tubi'
+    streamer: "tubi",
   },
   {
     icon: netflixIcon,
-    streamer: 'netflix'
-  }
-]
+    streamer: "netflix",
+  },
+];

@@ -15,7 +15,7 @@ interface StreamingLinksProps {
 }
 
 export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
-  const [ streamingLinks, setStreamingLinks ] = useState<StreamingLinks[]>([])
+  const [streamingLinks, setStreamingLinks] = useState<StreamingLinks[]>([])
 
   const fetchStreamingLinks = async () => {
     try {
@@ -37,19 +37,19 @@ export const StreamingReferences = ({ dataUrl }: StreamingLinksProps) => {
 
   return (
     <div className={styles.container}>
-      {streamingLinks.length === 0 
-      ? <span className={styles.noSiteMessage}>No site available...</span>
-      : streamingLinks.map((streaming, index) => (
-        <Link
-         key={index} 
-         href={streaming.attributes.url} 
-         target="_blank" 
-         className={styles.linkBox}
-        >
-          <Image src={getIcon(streaming.attributes.url)} alt="logo"/>
-        </Link>
-      ))}
-      
+      {streamingLinks.length === 0
+        ? <span className={styles.noSiteMessage}>No site available...</span>
+        : streamingLinks.map((streaming, index) => (
+          <Link
+            key={index}
+            href={streaming.attributes.url}
+            target="_blank"
+            className={styles.linkBox}
+          >
+            <Image src={getIcon(streaming.attributes.url)} alt="logo" />
+          </Link>
+        ))}
+
     </div>
   )
 }

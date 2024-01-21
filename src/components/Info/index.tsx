@@ -24,7 +24,7 @@ export const Info = ({ genres, releaseYear, children, averageRating, popularityR
             {genre.attributes.name}
             {index !== genres.length - 1 ? ', ' : ''}
           </span>
-          ))}
+        ))}
       </div>
       <div className={styles.children}>
         {children}
@@ -34,7 +34,7 @@ export const Info = ({ genres, releaseYear, children, averageRating, popularityR
           <Image src={starIcon} alt="star" />
           {averageRating}/100
         </div>
-        {popularityRank && 
+        {popularityRank &&
           <div className={styles.popularityBox}>
             <Image src={heartIcon} alt="heart" />
             #{popularityRank}
