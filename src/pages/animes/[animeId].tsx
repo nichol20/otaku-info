@@ -16,27 +16,27 @@ import styles from '@/styles/AnimePage.module.scss'
 
 export default function AnimePage() {
   const router = useRouter()
-  const [ anime, setAnime ] = useState<Anime>()
-  const [ genres, setGenres ] = useState<Genre[]>([])
+  const [anime, setAnime] = useState<Anime>()
+  const [genres, setGenres] = useState<Genre[]>([])
   const releaseYear = anime ? new Date(anime.attributes.startDate).getFullYear() : ''
-  const youtubeRef = useRef<YouTubePlayerRef>(null) 
+  const youtubeRef = useRef<YouTubePlayerRef>(null)
 
   const fetchAnime = async (cancelToken: CancelTokenSource) => {
     const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
     const cacheKey = `anime:${animeId}`
     const cachedAnime = getFromCache<Anime>(cacheKey)
 
-    if(cachedAnime) {
+    if (cachedAnime) {
       setAnime(cachedAnime)
       return cachedAnime
     }
-    
+
     try {
-      const { data } = await axios.get<ApiResponse<Anime>>(singleAnimeUrl(animeId), { 
+      const { data } = await axios.get<ApiResponse<Anime>>(singleAnimeUrl(animeId), {
         cancelToken: cancelToken.token
       })
 
-      if(!data.data) {
+      if (!data.data) {
         router.push('/404')
         return
       }
@@ -44,9 +44,9 @@ export default function AnimePage() {
       setAnime(data.data)
       setToCache(cacheKey, data.data)
       return data.data
-      
+
     } catch (error) {
-      if(axios.isCancel(error)) {
+      if (axios.isCancel(error)) {
       }
     }
   }
@@ -56,7 +56,7 @@ export default function AnimePage() {
     const cacheKey = `anime:${animeId}:genres`
     const cachedGenres = getFromCache<Genre[]>(cacheKey)
 
-    if(cachedGenres) {
+    if (cachedGenres) {
       setGenres(cachedGenres)
       return
     }
@@ -65,11 +65,11 @@ export default function AnimePage() {
       const { data } = await axios.get<ApiResponse<Genre[]>>(anime.relationships.genres.links.related, {
         cancelToken: cancelToken.token
       })
-  
+
       setToCache(cacheKey, data.data)
       setGenres(data.data)
     } catch (error) {
-      if(axios.isCancel(error)) {
+      if (axios.isCancel(error)) {
       }
     }
   }
@@ -77,7 +77,7 @@ export default function AnimePage() {
   const init = async (cancelToken: CancelTokenSource) => {
     const anime = await fetchAnime(cancelToken)
 
-    if(!anime) return
+    if (!anime) return
     fetchGenres(anime, cancelToken)
   }
 
@@ -88,18 +88,18 @@ export default function AnimePage() {
   useEffect(() => {
     const cancelToken = axios.CancelToken.source()
 
-    if(router.isReady) {
+    if (router.isReady) {
       init(cancelToken)
     }
 
     return () => {
       cancelToken.cancel()
     }
-  }, [ router.isReady ])
+  }, [router.isReady])
 
-  if(!anime) return <Loading />
+  if (!anime) return <Loading />
 
-  return(
+  return (
     <div className={styles.animePage}>
       <Header />
       <div className={styles.bannerContainer}>
@@ -111,29 +111,30 @@ export default function AnimePage() {
           <div className={styles.posterImgBox}>
             <img src={anime?.attributes.posterImage.original} alt="poster" />
           </div>
-      
+
           <Info
-           releaseYear={releaseYear}
-           genres={genres}
-           averageRating={anime.attributes.averageRating}
-           popularityRank={anime.attributes.popularityRank}
+            releaseYear={releaseYear}
+            genres={genres}
+            averageRating={anime.attributes.averageRating}
+            popularityRank={anime.attributes.popularityRank}
           >
-              <InfoItem name="show type" value={anime.attributes.showType} />
-              <InfoItem name="episodes" value={anime.attributes.episodeCount} />
-              <InfoItem name="runtime" value={
-                anime.attributes.episodeLength ? `${anime.attributes.episodeLength}min` : null} />
-              <InfoItem name="total runtime" value={
-                anime.attributes.totalLength ? `${anime.attributes.totalLength}min`: null} />
-              <InfoItem name="status" value={anime.attributes.status} />
-              <InfoItem name="nsfw" value={anime.attributes.nsfw ? 'yes' : 'no'} />
-              <InfoItem name="age guide" value={anime.attributes.ageRatingGuide} />
+            <InfoItem name="show type" value={anime.attributes.showType} />
+            <InfoItem name="episodes" value={anime.attributes.episodeCount} />
+            <InfoItem name="runtime" value={
+              anime.attributes.episodeLength ? `${anime.attributes.episodeLength}min` : null} />
+            <InfoItem name="total runtime" value={
+              anime.attributes.totalLength ? `${anime.attributes.totalLength}min` : null} />
+            <InfoItem name="status" value={anime.attributes.status} />
+            <InfoItem name="nsfw" value={anime.attributes.nsfw ? 'yes' : 'no'} />
+            <InfoItem name="age guide" value={anime.attributes.ageRatingGuide} />
           </Info>
 
           <div className={styles.trailerBtnContainer}>
             <button
-              className={styles.trailerBtn} 
-              onClick={showTrailer} 
+              className={styles.trailerBtn}
+              onClick={showTrailer}
               disabled={!anime.attributes.youtubeVideoId}
+              title={anime.attributes.youtubeVideoId ? "watch trailer" : "no trailer available"}
             >
               Watch trailer
               <Image src={playIcon} alt="play" className={styles.playIcon} />
@@ -142,7 +143,7 @@ export default function AnimePage() {
         </div>
       </div>
 
-      <YouTubePlayer videoId={anime.attributes.youtubeVideoId} ref={youtubeRef}/>
+      <YouTubePlayer videoId={anime.attributes.youtubeVideoId} ref={youtubeRef} />
 
       <div className={styles.detailsContainer}>
         <div className={styles.detail}>
