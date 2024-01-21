@@ -5,12 +5,13 @@ import styles from './style.module.scss'
 import Image from "next/image";
 import { searchIcon } from "@/assets";
 
-interface  SearchInputProps {
+interface SearchInputProps {
   onSearch: (value: string) => void
+  defaultValue: string
   delay: number
 }
 
-export const SearchInput = ({ onSearch, delay=0 }: SearchInputProps) => {
+export const SearchInput = ({ onSearch, defaultValue = "", delay = 0 }: SearchInputProps) => {
 
   const handleSearch = debounce((value: string) => {
     onSearch(value)
@@ -22,6 +23,7 @@ export const SearchInput = ({ onSearch, delay=0 }: SearchInputProps) => {
       <input
         type="text"
         onChange={e => handleSearch(e.target.value)}
+        defaultValue={defaultValue}
         placeholder="Search..."
         className={styles.searchInput}
       />
