@@ -18,10 +18,10 @@ const episodeLimit = 20
 
 export const Episodes = ({ dataUrl }: EpisodesProps) => {
   const router = useRouter()
-  const [ episodes, setEpisodes ] = useState<Episode[]>([])
-  const [ page, setPage ] = useState(0)
-  const [ isFetchingEpisode, setIsFetchingEpisode ] = useState(false)
-  const [ isAllFetched, setIsAllFetched ] = useState(false)
+  const [episodes, setEpisodes] = useState<Episode[]>([])
+  const [page, setPage] = useState(0)
+  const [isFetchingEpisode, setIsFetchingEpisode] = useState(false)
+  const [isAllFetched, setIsAllFetched] = useState(false)
 
   const fetchEpisodes = async (url: string, cancelToken?: CancelTokenSource) => {
     const animeId = typeof router.query.animeId === 'string' ? router.query.animeId : ''
@@ -30,13 +30,13 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
     const cachedEpisode = getFromCache<Episode[]>(episodeCacheKey)
     const cachedPage = getFromCache<number>(pageCacheKey)
 
-    if(cachedEpisode && cachedPage && cachedPage > page) {
+    if (cachedEpisode && cachedPage && cachedPage > page) {
       setEpisodes(cachedEpisode)
       setPage(cachedPage)
       return
     }
 
-    if(isAllFetched) {
+    if (isAllFetched) {
       return
     }
 
@@ -44,7 +44,7 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
     try {
       const response = await axios.get<ApiResponse<Episode[]>>(url, { cancelToken: cancelToken?.token })
 
-      if(response.data.data.length === 0) {
+      if (response.data.data.length === 0) {
         setIsAllFetched(true)
         return
       }
@@ -60,8 +60,8 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
         return newState
       })
     } catch (error) {
-      if(axios.isCancel(error)) {
-        
+      if (axios.isCancel(error)) {
+
       }
     } finally {
       setIsFetchingEpisode(false)
@@ -69,30 +69,26 @@ export const Episodes = ({ dataUrl }: EpisodesProps) => {
   }
 
   useInfiniteScrolling(() => {
-    const cancelToken = axios.CancelToken.source()
-
-    fetchEpisodes(`${dataUrl}?page[limit]=${episodeLimit}&page[offset]=${episodeLimit * page}`, cancelToken)
-
-    return () => {
-      cancelToken.cancel()
+    if (!isFetchingEpisode && !isAllFetched) {
+      fetchEpisodes(`${dataUrl}?page[limit]=${episodeLimit}&page[offset]=${episodeLimit * page}`)
     }
-  }, [ page, isAllFetched ])
+  }, [page, isAllFetched, isFetchingEpisode])
 
   return (
     <div className={styles.container}>
       {episodes.map((ep, index) => (
         <div className={styles.episode} key={index}>
-            {ep.attributes.thumbnail?.original && <div className={styles.thumbnailBox}>
-              <img src={ep.attributes.thumbnail.original} alt="thumbnail" />
-              {ep.attributes.length && <span className={styles.time}>{ep.attributes.length}min</span>}
-            </div>}
-            <div className={styles.info}>
-              <h5 className={styles.title}>
-                Episode {ep.attributes.number} 
-                {ep.attributes.titles?.en_jp && ` - ${ep.attributes.titles.en_jp}`}
-              </h5>
-              <div className={styles.synopsis}>{ep.attributes.synopsis}</div>
-            </div>
+          {ep.attributes.thumbnail?.original && <div className={styles.thumbnailBox}>
+            <img src={ep.attributes.thumbnail.original} alt="thumbnail" />
+            {ep.attributes.length && <span className={styles.time}>{ep.attributes.length}min</span>}
+          </div>}
+          <div className={styles.info}>
+            <h5 className={styles.title}>
+              Episode {ep.attributes.number}
+              {ep.attributes.titles?.en_jp && ` - ${ep.attributes.titles.en_jp}`}
+            </h5>
+            <div className={styles.synopsis}>{ep.attributes.synopsis}</div>
+          </div>
         </div>
       ))}
       <Loading isLoading={isFetchingEpisode} />
